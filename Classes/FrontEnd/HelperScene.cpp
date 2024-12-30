@@ -1,8 +1,8 @@
-#include "MenuScene.h"
-#include "HelperScene.h"
-#include "MenuScene.h"
+#include "FrontEnd/MenuScene.h"
+#include "FrontEnd/HelperScene.h"
+#include "FrontEnd/MenuScene.h"
 #include "ui/CocosGUI.h"
-#include"sound&music.h"
+#include"Config/sound&music.h"
 USING_NS_CC;
 using namespace cocos2d::ui;
 /*¥ÌŒÛ¥¶¿Ì*/

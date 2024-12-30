@@ -1,9 +1,9 @@
-#include "MenuScene.h"
-#include "OptionsScene.h"
-#include "HelperScene.h"
-#include "GameSelectionScene.h"
-#include"sound&music.h"
-#include"GameData.h"
+#include "FrontEnd/MenuScene.h"
+#include "FrontEnd/OptionsScene.h"
+#include "FrontEnd/HelperScene.h"
+#include "FrontEnd/GameSelectionScene.h"
+#include"Config/sound&music.h"
+#include"Config/GameData.h"
 USING_NS_CC;
 /*¥ÌŒÛ¥¶¿Ì*/
 static void problemLoading(const char* filename)

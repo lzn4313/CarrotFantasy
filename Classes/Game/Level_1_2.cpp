@@ -1,9 +1,9 @@
-#include"Level_1_1.h"
-#include"Level_1_2.h"
-#include"sound&music.h"
-#include"GameData.h"
-#include"GameScene.h"
-#include"enemy.h"
+#include"Game/Level_1_1.h"
+#include"Game/Level_1_2.h"
+#include"Config/sound&music.h"
+#include"Config/GameData.h"
+#include"Game/GameScene.h"
+#include"Game/enemy.h"
 #include<algorithm>
 
 USING_NS_CC;

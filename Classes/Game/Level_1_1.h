@@ -2,7 +2,7 @@
 #define __Level_1_1_LAYER_H__
 
 #include "cocos2d.h"
-#include"GameScene.h"
+#include"Game/GameScene.h"
 
 struct LevelPath {
     pos point;

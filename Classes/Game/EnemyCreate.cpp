@@ -1,7 +1,7 @@
 #include "cocos2d.h"
-#include"GameScene.h"
-#include"enemy.h"
-#include"EnemyCreate.h"
+#include"Game/GameScene.h"
+#include"Game/enemy.h"
+#include"Game/EnemyCreate.h"
 #include<vector>
 #include<algorithm>
 using namespace std;

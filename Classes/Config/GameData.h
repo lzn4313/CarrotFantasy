@@ -1,7 +1,7 @@
 #pragma once
 #include<string>
 #include "cocos2d.h"
-#include "sound&music.h"
+#include "Config/sound&music.h"
 using namespace std;
 USING_NS_CC;
 /*本游戏数据存储采用cocos自带的UserDefault进行存储，将会在保存地址生成对应的.xml文件，可以对数据进行获取和写入*/

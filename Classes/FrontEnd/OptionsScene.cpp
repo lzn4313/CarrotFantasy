@@ -1,9 +1,9 @@
-#include "MenuScene.h"
-#include "OptionsScene.h"
+#include "FrontEnd/MenuScene.h"
+#include "FrontEnd/OptionsScene.h"
 #include "ui/CocosGUI.h"
 #include "AudioEngine.h"
-#include "sound&music.h"
-#include"GameData.h"
+#include "Config/sound&music.h"
+#include"Config/GameData.h"
 #include<string>
 USING_NS_CC;
 using namespace cocos2d::ui;

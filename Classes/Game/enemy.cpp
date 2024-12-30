@@ -1,12 +1,12 @@
-#include "enemy.h"
-#include"sound&music.h"
-#include"GameData.h"
-#include"GameScene.h"
-#include"Level_1_1.h"
+#include"Config/sound&music.h"
+#include"Config/GameData.h"
+#include "Game/enemy.h"
+#include"Game/GameScene.h"
+#include"Game/Level_1_1.h"
+#include "Game/Tower.h"
 #include <vector>
 #include<algorithm>
 #include <math.h>
-#include "Tower.h"
 USING_NS_CC;
 extern int if_speed_up;
 extern int game_waves;

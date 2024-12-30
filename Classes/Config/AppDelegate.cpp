@@ -1,7 +1,7 @@
 #include "AppDelegate.h"
-#include "MenuScene.h"
+#include "FrontEnd/MenuScene.h"
 #include "AudioEngine.h"
-#include "GameData.h"
+#include "Config/GameData.h"
 // #define USE_AUDIO_ENGINE 1
 
 #if USE_AUDIO_ENGINE

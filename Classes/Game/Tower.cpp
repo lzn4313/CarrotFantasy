@@ -1,6 +1,6 @@
-#include"Tower.h"
-#include"sound&music.h"
-#include"enemy.h"
+#include"Game/Tower.h"
+#include"Config/sound&music.h"
+#include"Game/enemy.h"
 #include <string>
 #include <cmath>
 USING_NS_CC;

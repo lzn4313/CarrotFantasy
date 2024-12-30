@@ -1,5 +1,5 @@
 #include "cocos2d.h"
-#include"GameScene.h"
+#include"Game/GameScene.h"
 #include<vector>
 using namespace std; 
 USING_NS_CC;

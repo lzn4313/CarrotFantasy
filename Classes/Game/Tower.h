@@ -1,6 +1,6 @@
 #include "cocos2d.h"
-#include "GameScene.h"
-#include "enemy.h"
+#include "Game/GameScene.h"
+#include "Game/enemy.h"
 using namespace std;
 
 /*名称与标签对应*/

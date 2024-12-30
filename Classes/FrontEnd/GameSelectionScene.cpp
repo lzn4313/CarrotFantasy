@@ -1,10 +1,10 @@
-#include"GameScene.h"
-#include "GameSelectionScene.h"
-#include "MenuScene.h"
-#include "OptionsScene.h"
-#include "HelperScene.h"
-#include "sound&music.h"
-#include "GameData.h"
+#include"Game/GameScene.h"
+#include "FrontEnd/GameSelectionScene.h"
+#include "FrontEnd/MenuScene.h"
+#include "FrontEnd/OptionsScene.h"
+#include "FrontEnd/HelperScene.h"
+#include "Config/sound&music.h"
+#include "Config/GameData.h"
 #include"ui/CocosGUI.h"
 USING_NS_CC;
 using namespace cocos2d::ui;
