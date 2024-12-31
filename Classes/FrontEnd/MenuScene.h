@@ -2,9 +2,20 @@
 #define __Menu_SCENE_H__
 
 #include "cocos2d.h"
+
+USING_NS_CC;
+
 //菜单界面大类
 class MenuScene : public cocos2d::Scene
 {
+private:
+    Size visible_size;
+    void initBackGround();
+    void initCloud();
+    void initMonster();
+    void initCarrot();
+    void initTitle();
+    void initMenu();
 public:
     //构造函数
     static cocos2d::Scene* createScene();//继承创建场景

@@ -1,7 +1,5 @@
-#include "AppDelegate.h"
-#include "FrontEnd/MenuScene.h"
-#include "AudioEngine.h"
-#include "Config/GameData.h"
+#include "Config/AppDelegate.h"
+#include "FrontEnd/LoadingScene.h"
 // #define USE_AUDIO_ENGINE 1
 
 #if USE_AUDIO_ENGINE
@@ -83,19 +81,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
     register_all_packages();
 
-    //设置存档地址（存档相关请跳转至GameData.h）
-    FileUtils::getInstance()->setWritablePath(FileUtils::getInstance()->getDefaultResourceRootPath()+"../");
-    //初始化存档数据
-    init_data();
-    //如果背景音乐开，则播放背景音乐
-    if (UserDefault::getInstance()->getIntegerForKey("bg_music") == 1) {
-        AudioEngine::play2d("/sound/CarrotFantasy.mp3", true, 0.5f);
-    }
 
-    // create a scene. it's an autorelease object
-    auto scene = MenuScene::createScene();
-    // run
-    director->runWithScene(scene);
+    director->runWithScene(LoadingScene::createScene());
 
     return true;
 }
