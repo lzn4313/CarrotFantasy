@@ -95,7 +95,7 @@ bool HelperScene::init()
 //返回主菜单
 void HelperScene::goto_home(Ref* psender)
 {
-	button_sound_effect();//播放音效
+	SoundManager::getInstance()->button_sound_effect();//播放音效
 	Scene* menu_scene = MenuScene::createScene();//创建菜单场景
 	Director::getInstance()->replaceScene(TransitionSlideInT::create(0.3, menu_scene));//以从上向下滑动方式切换
 }
@@ -111,7 +111,7 @@ void HelperScene::goto_help(Ref* psender, Widget::TouchEventType type)
 		case Widget::TouchEventType::CANCELED:
 			break;
 		case Widget::TouchEventType::ENDED://当且仅当抬起时触发
-			button_sound_effect();//播放音效
+			SoundManager::getInstance()->button_sound_effect();//播放音效
 			//将切换前对应的Layer移除
 			if (this->getChildByName("MonsterLayer") != nullptr) {
 				this->removeChildByName("MonsterLayer");
@@ -152,7 +152,7 @@ void HelperScene::goto_monster(Ref* psender, Widget::TouchEventType type)
 		case Widget::TouchEventType::CANCELED:
 			break;
 		case Widget::TouchEventType::ENDED://当且仅当抬起时触发
-			button_sound_effect();//播放音效
+			SoundManager::getInstance()->button_sound_effect();//播放音效
 
 			//将切换前的Layer移除
 			if (this->getChildByName("HelpLayer") != nullptr) {
@@ -194,7 +194,7 @@ void HelperScene::goto_tower(Ref* psender, Widget::TouchEventType type)
 		case Widget::TouchEventType::CANCELED:
 			break;
 		case Widget::TouchEventType::ENDED://当且仅当抬起时触发
-			button_sound_effect();//播放音效
+			SoundManager::getInstance()->button_sound_effect();//播放音效
 
 			//将切换前的选项页移除
 			if (this->getChildByName("HelpLayer") != nullptr) {
@@ -306,7 +306,7 @@ bool HelpLayer::init()
 				toplayer->runAction(MoveTo::create(0.1, Vec2(page[0], 0)));
 			}
 			else {//若不是最左页，进行左翻页操作
-				page_sound_effect();//播放翻页音效
+				SoundManager::getInstance()->page_sound_effect();//播放翻页音效
 				if (toplayer->getPosition().x < 0 && toplayer->getPosition().x >page[1]) {//如果当前是第1页，则到第0页
 					toplayer->runAction(MoveTo::create(0.1, Vec2(page[0], 0)));
 					Node* num =this->getChildByName("page_num1");
@@ -329,7 +329,7 @@ bool HelpLayer::init()
 				toplayer->runAction(MoveTo::create(0.1, Vec2(page[3], 0)));
 			}
 			else {//若不是最右页，则利用动画切换到右一页
-				page_sound_effect();//播放音效
+				SoundManager::getInstance()->page_sound_effect();//播放音效
 				if (toplayer->getPosition().x < 0 && toplayer->getPosition().x >page[1]) {//若当前是第0页，切换到第1页
 					toplayer->runAction(MoveTo::create(0.1, Vec2(page[1], 0)));
 					Node* num = this->getChildByName("page_num1");
@@ -581,7 +581,7 @@ bool TowerLayer::init()
 			}
 			else {
 				toplayer->runAction(MoveTo::create(0.1, Vec2(page[n], 0)));
-				page_sound_effect();
+				SoundManager::getInstance()->page_sound_effect();
 				Node* num = this->getChildByName("page_num2");
 				switch (n) {
 					case 0:
@@ -622,7 +622,7 @@ bool TowerLayer::init()
 			}
 			else {
 				toplayer->runAction(MoveTo::create(0.1, Vec2(page[n + 1], 0)));
-				page_sound_effect();
+				SoundManager::getInstance()->page_sound_effect();
 				Node* num = this->getChildByName("page_num2");
 				switch (n) {
 					case 0:

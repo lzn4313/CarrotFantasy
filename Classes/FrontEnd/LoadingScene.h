@@ -5,15 +5,19 @@
 
 class LoadingScene : public cocos2d::Scene
 {
+private:
+    int numberOfLoadedRes;
+
+    void loadSource();
+    void loadMenu();
+    void loadOptions();
+
+    void check(float dt);
+    void cacheImage(const std::string& filepath);
 public:
     static cocos2d::Scene* createScene();
     virtual bool init();
     CREATE_FUNC(LoadingScene);
-
-    void loadSource(); 
-    void logic(float dt);
-    int numberOfLoadedRes;
-    void cacheImage(const std::string& filepath);
 };
 
 #endif // __LOADING_SCENE_H__

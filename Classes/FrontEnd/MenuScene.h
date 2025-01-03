@@ -9,18 +9,14 @@ USING_NS_CC;
 class MenuScene : public cocos2d::Scene
 {
 private:
-    Size visible_size;
+    Size visibleSize;
     void initBackGround();
     void initCloud();
     void initMonster();
     void initCarrot();
     void initTitle();
     void initMenu();
-public:
-    //构造函数
-    static cocos2d::Scene* createScene();//继承创建场景
-    virtual bool init();
-    CREATE_FUNC(MenuScene);
+
     //关闭游戏
     void close_game(Ref* pSender);
     //去设置界面
@@ -33,6 +29,12 @@ public:
     void goto_boss(Ref* psender);
     //去怪物窝
     void goto_nest(Ref* psender);
+
+public:
+    //构造函数
+    static cocos2d::Scene* createScene();//继承创建场景
+    virtual bool init();
+    CREATE_FUNC(MenuScene);
 };
 
 #endif // __Menu_SCENE_H__
