@@ -168,7 +168,7 @@ bool GameMenu::init()
     auto speed_up_off_sprite = Sprite::create("/GameScene/touming-hd.pvr_9.PNG");
     auto speed_up_off = MenuItemSprite::create(speed_up_off_sprite, speed_up_off_sprite);
     auto speed_toggle = MenuItemToggle::createWithCallback([&](Ref* psender) {
-        button_sound_effect();//播放音效
+        SoundManager::getInstance()->button_sound_effect();//播放音效
         if (if_speed_up == 0) {//若勾选，则表示开启二倍速
             if_speed_up = 1;
         }
@@ -192,7 +192,7 @@ bool GameMenu::init()
     auto pause_on_sprite = Sprite::create("/GameScene/touming-hd.pvr_11.PNG");
     auto pause_on = MenuItemSprite::create(pause_on_sprite, pause_on_sprite);
     auto pause_toggle = MenuItemToggle::createWithCallback([=](Ref* psender) {
-        button_sound_effect();//播放音效
+        SoundManager::getInstance()->button_sound_effect();//播放音效
         if (if_pause == 0) {//若勾选，则表示暂停
             if_pause = 1;
             paused->setVisible(true);
@@ -224,7 +224,7 @@ bool GameMenu::init()
             case Button::TouchEventType::CANCELED:
                 break;
             case Button::TouchEventType::ENDED:
-                button_sound_effect();//播放音效
+                SoundManager::getInstance()->button_sound_effect();//播放音效
                 options();
                 break;
         }
@@ -291,11 +291,11 @@ bool GameMenu::init()
                 Node* node = this->getChildByTag(100 * position.i + position.j);
                 Sprite* grid = static_cast<Sprite*>(node);
                 if (game_map[position.i][position.j] == EMPTY) {
-                    button_sound_effect();
+                    SoundManager::getInstance()->button_sound_effect();
                     build(position, tower_available);
                 }
                 else if (game_map[position.i][position.j] == TOWER || game_map[position.i][position.j] == CARROT) {
-                    button_sound_effect();
+                    SoundManager::getInstance()->button_sound_effect();
                     tower_operations(position);
                 }
             }
@@ -336,7 +336,7 @@ bool GameMenu::init()
                 if (flag == 0) {
                     Node* node = this->getChildByTag(100 * position.i + position.j);
                     Sprite* grid = static_cast<Sprite*>(node);
-                    button_sound_effect();
+                    SoundManager::getInstance()->button_sound_effect();
                     auto image_change = CallFunc::create([=]() {
                         grid->setTexture("/GameScene/cantBuild.png");
                         });
@@ -407,7 +407,7 @@ void GameMenu::lose() {
     auto again_btn = MenuItemImage::create("/GameScene/again_normal.png", "/GameScene/again_selected.png");
     again_btn->setPosition(Vec2(visibleSize.width * 0.6, visibleSize.height * 0.3));
     again_btn->setCallback([this, black_layer](Ref* psender) {//按钮回调事件，返回上一级
-        button_sound_effect();
+        SoundManager::getInstance()->button_sound_effect();
         this->removeChildByName("PlayingLevel");
         if (level_selection == 1) {
             auto level_1_1 = Level_1_1::createLayer();
@@ -434,7 +434,7 @@ void GameMenu::lose() {
     auto return_btn = MenuItemImage::create("/GameScene/return_normal.png", "/GameScene/return_selected.png");
     return_btn->setPosition(Vec2(visibleSize.width * 0.35, visibleSize.height * 0.3));
     return_btn->setCallback([this, black_layer](Ref* psender) {//按钮回调事件，返回上一级
-        button_sound_effect();
+        SoundManager::getInstance()->button_sound_effect();
         Director::getInstance()->replaceScene(GameSelectionScene::createScene());
         });
     options_menu->addChild(return_btn);
@@ -498,7 +498,7 @@ void GameMenu::win() {
     auto resume_btn = MenuItemImage::create("/GameScene/resume_normal.png", "/GameScene/resume_selected.png");
     resume_btn->setPosition(Vec2(visibleSize.width * 0.6, visibleSize.height * 0.3));
     resume_btn->setCallback([this, black_layer](Ref* psender) {//按钮回调事件，返回上一级
-        button_sound_effect();
+        SoundManager::getInstance()->button_sound_effect();
         this->getParent()->removeChildByName("PlayingLevel");
         if (level_selection == 1) {
             level_selection++;
@@ -523,7 +523,7 @@ void GameMenu::win() {
     auto return_btn = MenuItemImage::create("/GameScene/return_normal.png", "/GameScene/return_selected.png");
     return_btn->setPosition(Vec2(visibleSize.width * 0.35, visibleSize.height * 0.3));
     return_btn->setCallback([this, black_layer](Ref* psender) {//按钮回调事件，返回上一级
-        button_sound_effect();
+        SoundManager::getInstance()->button_sound_effect();
         Director::getInstance()->replaceScene(GameSelectionScene::createScene());
         });
     options_menu->addChild(return_btn);
@@ -595,7 +595,7 @@ void GameMenu::update(float dt) {
 }
 //设置界面
 void GameMenu::options() {
-    button_sound_effect();//播放音效
+    SoundManager::getInstance()->button_sound_effect();//播放音效
     //获取屏幕大小
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -626,7 +626,7 @@ void GameMenu::options() {
     auto resume_btn = MenuItemImage::create("/GameScene/resume_normal.png", "/GameScene/resume_selected.png");
     resume_btn->setPosition(Vec2(visibleSize.width *0.49, visibleSize.height * 0.67));
     resume_btn->setCallback([this, black_layer](Ref* psender) {//按钮回调事件，返回上一级
-        button_sound_effect();
+        SoundManager::getInstance()->button_sound_effect();
         this->removeChild(black_layer);
         if_pause = 0;
         });
@@ -635,7 +635,7 @@ void GameMenu::options() {
     auto restart_btn = MenuItemImage::create("/GameScene/restart_normal.png", "/GameScene/restart_selected.png");
     restart_btn->setPosition(Vec2(visibleSize.width *0.49, visibleSize.height * 0.52));
     restart_btn->setCallback([this, black_layer](Ref* psender) {//按钮回调事件，返回上一级
-        button_sound_effect();
+        SoundManager::getInstance()->button_sound_effect();
         this->removeChildByName("PlayingLevel");
         if (level_selection == 1) {
             auto level_1_1 = Level_1_1::createLayer();
@@ -661,7 +661,7 @@ void GameMenu::options() {
     auto return_btn = MenuItemImage::create("/GameScene/return_normal.png", "/GameScene/return_selected.png");
     return_btn->setPosition(Vec2(visibleSize.width *0.49, visibleSize.height * 0.37));
     return_btn->setCallback([this, black_layer](Ref* psender) {//按钮回调事件，返回上一级
-        button_sound_effect();
+        SoundManager::getInstance()->button_sound_effect();
         Director::getInstance()->replaceScene(GameSelectionScene::createScene());
         });
     options_menu->addChild(return_btn);

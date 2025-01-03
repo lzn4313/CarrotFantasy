@@ -120,7 +120,7 @@ void Tower_body::update(float dt)
 				string str[4] = { "/Tower/Bottle/" ,"/Tower/Shit/", "/Tower/Fan/","/Tower/Star/" };
 
 				if (tower_information.name_tag == Tower_Bottle) {
-					bottle_atk_sound_effect();
+					SoundManager::getInstance()->bottle_atk_sound_effect();
 					this->setRotation(r);
 					Vector<SpriteFrame*> frame;
 					switch (tower_information.level) {
@@ -175,7 +175,7 @@ void Tower_body::update(float dt)
 					ThisLayer->addChild(bullet);
 				}
 				else if (tower_information.name_tag == Tower_Shit) {
-					shit_atk_sound_effect();
+					SoundManager::getInstance()->shit_atk_sound_effect();
 					//利用帧动画完成攻击动画
 					auto atk_Effect = Sprite::create();
 					Vector<SpriteFrame*> frame;
@@ -231,7 +231,7 @@ void Tower_body::update(float dt)
 					ThisLayer->addChild(bullet);
 				}
 				else if (tower_information.name_tag == Tower_Star) {
-					star_atk_sound_effect();
+					SoundManager::getInstance()->star_atk_sound_effect();
 					//利用帧动画完成攻击动画
 					auto atk_Effect = Sprite::create();
 					Vector<SpriteFrame*> frame;
@@ -308,7 +308,7 @@ void Tower_body::update(float dt)
 void Tower::build_tower(pos position, int tag, cocos2d::Layer* this_layer)
 {
 	if (tag <= 4) {
-		build_sound_effect();
+		SoundManager::getInstance()->build_sound_effect();
 
 		string str[5] = { "/Tower/Bottle/" ,"/Tower/Shit/", "/Tower/Fan/","/Tower/Star/" ,"/Tower/Build/" };
 		vec2 vec = trans_ij_to_xy(position);
@@ -366,7 +366,7 @@ void Tower::build_tower(pos position, int tag, cocos2d::Layer* this_layer)
 void Tower::up_level_tower(pos position, cocos2d::Layer* this_layer)
 {
 	vec2 vec = trans_ij_to_xy(position);
-	uplevel_sound_effect();
+	SoundManager::getInstance()->uplevel_sound_effect();
 
 	if (game_map[position.i][position.j] != CARROT) {
 		if (this->get_level() < Max_Level) {
@@ -474,7 +474,7 @@ void Tower::up_level_tower(pos position, cocos2d::Layer* this_layer)
 /*出售炮台*/
 void Tower::sell_tower(pos position, cocos2d::Layer* this_layer)
 {
-	sell_sound_effect();
+	SoundManager::getInstance()->sell_sound_effect();
 
 	this_layer->removeChild(TowerBase);
 	this_layer->removeChild(TowerBody);

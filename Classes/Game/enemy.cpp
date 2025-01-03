@@ -215,7 +215,7 @@ void Enemy::update(float dt)
 		
 		this->setPosition(Vec2(x + this_x, y + this_y));
 		if (levelPath[enemy.count].direction == 'o') {
-			carrot_eaten_sound_effect();
+			SoundManager::getInstance()->carrot_eaten_sound_effect();
 			carrot_hp -= enemy.damage;
 			Vector<SpriteFrame*> death;
 			death.pushBack(SpriteFrame::create("/Enemy/monster/1.PNG",Rect(0,0,109,99)));
@@ -272,13 +272,13 @@ void Enemy::update(float dt)
 	//没血了就消失
 	else if(enemy.hp<=0){
 		if (enemy.type == NORMAL) {
-			normal_dead_sound_effect();
+			SoundManager::getInstance()->normal_dead_sound_effect();
 		}
 		else if (enemy.type == FLY) {
-			fly_dead_sound_effect();
+			SoundManager::getInstance()->fly_dead_sound_effect();
 		}
 		else if (enemy.type == BOSS) {
-			boss_dead_sound_effect();
+			SoundManager::getInstance()->boss_dead_sound_effect();
 		}
 		Vector<SpriteFrame*> death;
 		death.pushBack(SpriteFrame::create("/Enemy/monster/1.PNG", Rect(0, 0, 109, 99)));

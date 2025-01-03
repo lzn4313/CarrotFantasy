@@ -51,7 +51,7 @@ bool GameSelectionScene::init()
     //去帮助界面
     auto help_btn = MenuItemImage::create("/GameSelectionScene/stages_bg-hd_42.PNG", "/GameSelectionScene/stages_bg-hd_33.PNG");
     help_btn->setCallback([](Ref* psender) {//按钮回调函数
-        button_sound_effect();//播放音效
+        SoundManager::getInstance()->button_sound_effect();//播放音效
         auto helper_scene = HelperScene::createScene();//创建帮助场景
         Director::getInstance()->replaceScene(TransitionCrossFade::create(0.2, helper_scene));//以消失形式切换
         });
@@ -118,7 +118,7 @@ bool BigLevelLayer::init()
     //返回主菜单
     auto home_btn = MenuItemImage::create("/GameSelectionScene/themescene1-hd_8.PNG", "/GameSelectionScene/themescene1-hd_17.PNG");
     home_btn->setCallback([this](Ref* psender) {//回调函数
-        button_sound_effect();//播放音效
+        SoundManager::getInstance()->button_sound_effect();//播放音效
         auto menu_scene = MenuScene::createScene();//创建主菜单对应Scene
         Director::getInstance()->replaceScene(TransitionFlipAngular::create(0.2, menu_scene));//以对角反转形式切换
         });
@@ -168,7 +168,7 @@ void BigLevelLayer::create_slide_layer()
         origin.y + visibleSize.height * 0.11));
     slide_layer->addChild(level_1_statistics_image);
 
-    auto level_1_statistics_txt = Label::createWithTTF(to_string(UserDefault::getInstance()->getIntegerForKey("level_1")) + "/9",
+    auto level_1_statistics_txt = Label::createWithTTF(std::to_string(UserDefault::getInstance()->getIntegerForKey("level_1")) + "/9",
         "/fonts/Marker Felt.ttf", 20);
     level_1_statistics_txt->setPosition(Vec2(origin.x + visibleSize.width * 0.66,
         origin.y + visibleSize.height * 0.12));
@@ -251,7 +251,7 @@ void BigLevelLayer::create_slide_layer()
             }
             else if (slide_layer->getPosition().x < page[0]) {
                 slide_layer->runAction(MoveTo::create(0.1, Vec2(page[n], 0)));
-                page_sound_effect();
+                SoundManager::getInstance()->page_sound_effect();
                 Node* num_1 = this->getChildByTag(n);
                 static_cast<Sprite*>(num_1)->setTexture("/GameSelectionScene/page_yes.png");
                 Node* num_2 = this->getChildByTag(n + 1);
@@ -264,7 +264,7 @@ void BigLevelLayer::create_slide_layer()
             }
             else if (slide_layer->getPosition().x > page[3]) {
                 slide_layer->runAction(MoveTo::create(0.1, Vec2(page[n + 1], 0)));
-                page_sound_effect();
+                SoundManager::getInstance()->page_sound_effect();
                 Node* num_1 = this->getChildByTag(n + 1);
                 static_cast<Sprite*>(num_1)->setTexture("/GameSelectionScene/page_yes.png");
                 Node* num_2 = this->getChildByTag(n);
@@ -317,7 +317,7 @@ void BigLevelLayer::create_slide_layer()
 //去评价界
 void BigLevelLayer::goto_evaluate(Ref* psender)
 {
-    button_sound_effect();//播放音效
+    SoundManager::getInstance()->button_sound_effect();//播放音效
     //获取屏幕大小
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -348,7 +348,7 @@ void BigLevelLayer::goto_evaluate(Ref* psender)
     ok_btn->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 0.25));
     ok_btn->setScale(1.4);
     ok_btn->setCallback([this, evaluate_layer](Ref* psender) {//按钮回调事件，返回上一级
-        button_sound_effect();
+        SoundManager::getInstance()->button_sound_effect();
         this->removeChild(evaluate_layer);
         });
     evaluate_menu->addChild(ok_btn);
@@ -367,7 +367,7 @@ void BigLevelLayer::page_left(Ref* psender)
     //向左移动一页
     if (slide_layer->getPosition().x < page[0]) {
         slide_layer->runAction(MoveBy::create(0.1, Vec2(visibleSize.width, 0)));
-        page_sound_effect();
+        SoundManager::getInstance()->page_sound_effect();
         Node* num_1 = this->getChildByTag(n);
         static_cast<Sprite*>(num_1)->setTexture("/GameSelectionScene/page_yes.png");
         Node* num_2 = this->getChildByTag(n + 1);
@@ -388,7 +388,7 @@ void BigLevelLayer::page_right(Ref* psender)
     //向右移动一页
     if (slide_layer->getPosition().x > page[3]) {
         slide_layer->runAction(MoveBy::create(0.1, Vec2(-visibleSize.width, 0)));
-            page_sound_effect();
+        SoundManager::getInstance()->page_sound_effect();
                 Node* num_1 = this->getChildByTag(n + 2);
                 static_cast<Sprite*>(num_1)->setTexture("/GameSelectionScene/page_yes.png");
                 Node* num_2 = this->getChildByTag(n + 1);
@@ -399,7 +399,7 @@ void BigLevelLayer::page_right(Ref* psender)
 //去天际
 void BigLevelLayer::goto_level_1(Ref* psender)
 {
-    button_sound_effect();//播放音效
+    SoundManager::getInstance()->button_sound_effect();//播放音效
     auto level_1_layer = Level_1_Layer::createLayer();//创建层，并加入
     this->getParent()->addChild(level_1_layer, 1);
     this->removeFromParent();
@@ -407,7 +407,7 @@ void BigLevelLayer::goto_level_1(Ref* psender)
 //去丛林
 void BigLevelLayer::goto_level_2(Ref* psender)
 {
-    button_sound_effect();//播放音效
+    SoundManager::getInstance()->button_sound_effect();//播放音效
 
     if (UserDefault::getInstance()->getIntegerForKey("level_2") == 0) {//若当前丛林未解锁，则上锁提示
 
@@ -437,7 +437,7 @@ void BigLevelLayer::goto_level_2(Ref* psender)
         lock_btn->setPosition(Vec2(origin.x + visibleSize.width * 0.55,
             origin.y + visibleSize.height * 0.4));
         lock_btn->setCallback([this, black_layer](Ref* psender) {
-            button_sound_effect();
+            SoundManager::getInstance()->button_sound_effect();
             this->removeChild(black_layer);
             });
         lock_btn->setScale(1.4);
@@ -453,7 +453,7 @@ void BigLevelLayer::goto_level_2(Ref* psender)
 //去沙漠
 void BigLevelLayer::goto_level_3(Ref* psender)
 {
-    button_sound_effect();//播放音效
+    SoundManager::getInstance()->button_sound_effect();//播放音效
 
     if (UserDefault::getInstance()->getIntegerForKey("level_2") == 0) {//若当前沙漠未解锁，则上锁提示
 
@@ -483,7 +483,7 @@ void BigLevelLayer::goto_level_3(Ref* psender)
         lock_btn->setPosition(Vec2(origin.x + visibleSize.width * 0.55,
             origin.y + visibleSize.height * 0.4));
         lock_btn->setCallback([this, black_layer](Ref* psender) {
-            button_sound_effect();
+            SoundManager::getInstance()->button_sound_effect();
             this->removeChild(black_layer);
             });
         lock_btn->setScale(1.4);
@@ -803,7 +803,7 @@ void Level_1_Layer::create_slide_layer()
             else if (move_layer->getPosition().x < page[0]) {
                 move_layer->runAction(MoveTo::create(0.1, Vec2(page[n], 0)));
                 static_layer->setPosition(Vec2(page[n], static_layer->getPositionY()));
-                page_sound_effect();
+                SoundManager::getInstance()->page_sound_effect();
             }
         }
         else if (distance < -visibleSize.width / 6) {
@@ -813,7 +813,7 @@ void Level_1_Layer::create_slide_layer()
             else if (move_layer->getPosition().x > page[4]) {
                 move_layer->runAction(MoveTo::create(0.1, Vec2(page[n + 1], 0)));
                 static_layer->setPosition(Vec2(page[n + 1], static_layer->getPositionY()));
-                page_sound_effect();
+                SoundManager::getInstance()->page_sound_effect();
             }
         }
         else {//若小于六分之一屏幕，则视为取消翻页或点击
@@ -870,7 +870,7 @@ void Level_1_Layer::create_slide_layer()
 //回到选大关界面
 void Level_1_Layer::return_to_biglevel(Ref* psender)
 {
-    button_sound_effect();//播放音效
+    SoundManager::getInstance()->button_sound_effect();//播放音效
     auto big_level_layer = BigLevelLayer::createLayer();//创建大关Layer
     this->getParent()->addChild(big_level_layer);//渲染
     this->removeFromParent();//移除当前Layer
@@ -887,7 +887,7 @@ void Level_1_Layer::level_1_1(Ref* psender, Widget::TouchEventType type)
         case Widget::TouchEventType::CANCELED:
             break;
         case Widget::TouchEventType::ENDED://当且仅当抬起时触发
-            button_sound_effect();//播放音效
+            SoundManager::getInstance()->button_sound_effect();//播放音效
             level_selection = 1;
             auto game_scene = GameScene::createScene();
             Director::getInstance()->replaceScene(game_scene);
@@ -905,7 +905,7 @@ void Level_1_Layer::level_1_2(Ref* psender, Widget::TouchEventType type)
         case Widget::TouchEventType::CANCELED:
             break;
         case Widget::TouchEventType::ENDED://当且仅当抬起时触发
-            button_sound_effect();//播放音效
+            SoundManager::getInstance()->button_sound_effect();//播放音效
 
             if (UserDefault::getInstance()->getIntegerForKey("level_1") < 2) {//若当前关未解锁，弹出提示
 
@@ -935,7 +935,7 @@ void Level_1_Layer::level_1_2(Ref* psender, Widget::TouchEventType type)
                 lock_btn->setPosition(Vec2(origin.x + visibleSize.width * 0.55,
                     origin.y + visibleSize.height * 0.4));
                 lock_btn->setCallback([this, black_layer](Ref* psender) {
-                    button_sound_effect();
+                    SoundManager::getInstance()->button_sound_effect();
                     this->removeChild(black_layer);
                     });
                 lock_btn->setScale(1.4);
@@ -963,7 +963,7 @@ void Level_1_Layer::level_1_3(Ref* psender, Widget::TouchEventType type)
         case Widget::TouchEventType::CANCELED:
             break;
         case Widget::TouchEventType::ENDED://当且仅当抬起时触发
-            button_sound_effect();//播放音效
+            SoundManager::getInstance()->button_sound_effect();//播放音效
 
             if (UserDefault::getInstance()->getIntegerForKey("level_1") < 3) {//若未解锁，弹出提示
 
@@ -993,7 +993,7 @@ void Level_1_Layer::level_1_3(Ref* psender, Widget::TouchEventType type)
                 lock_btn->setPosition(Vec2(origin.x + visibleSize.width * 0.55,
                     origin.y + visibleSize.height * 0.4));
                 lock_btn->setCallback([this, black_layer](Ref* psender) {
-                    button_sound_effect();
+                    SoundManager::getInstance()->button_sound_effect();
                     this->removeChild(black_layer);
                     });
                 lock_btn->setScale(1.4);
@@ -1019,7 +1019,7 @@ void Level_1_Layer::level_1_4(Ref* psender, Widget::TouchEventType type)
         case Widget::TouchEventType::CANCELED:
             break;
         case Widget::TouchEventType::ENDED://当且仅当抬起时触发
-            button_sound_effect();//播放音效
+            SoundManager::getInstance()->button_sound_effect();//播放音效
 
             if (UserDefault::getInstance()->getIntegerForKey("level_1") < 4) {//若未解锁，弹出提示
 
@@ -1049,7 +1049,7 @@ void Level_1_Layer::level_1_4(Ref* psender, Widget::TouchEventType type)
                 lock_btn->setPosition(Vec2(origin.x + visibleSize.width * 0.55,
                     origin.y + visibleSize.height * 0.4));
                 lock_btn->setCallback([this, black_layer](Ref* psender) {
-                    button_sound_effect();
+                    SoundManager::getInstance()->button_sound_effect();
                     this->removeChild(black_layer);
                     });
                 lock_btn->setScale(1.4);
@@ -1075,7 +1075,7 @@ void Level_1_Layer::level_1_5(Ref* psender, Widget::TouchEventType type)
         case Widget::TouchEventType::CANCELED:
             break;
         case Widget::TouchEventType::ENDED://当且仅当抬起时触发
-            button_sound_effect();//播放音效
+            SoundManager::getInstance()->button_sound_effect();//播放音效
 
             if (UserDefault::getInstance()->getIntegerForKey("level_1") < 5) {//若未解锁，弹出提示
 
@@ -1105,7 +1105,7 @@ void Level_1_Layer::level_1_5(Ref* psender, Widget::TouchEventType type)
                 lock_btn->setPosition(Vec2(origin.x + visibleSize.width * 0.55,
                     origin.y + visibleSize.height * 0.4));
                 lock_btn->setCallback([this, black_layer](Ref* psender) {
-                    button_sound_effect();
+                    SoundManager::getInstance()->button_sound_effect();
                     this->removeChild(black_layer);
                     });
                 lock_btn->setScale(1.4);
