@@ -11,7 +11,8 @@ private:
     void loadSource();
     void loadMenu();
     void loadOptions();
-
+    void loadHelper();
+    void loadGameSelection();
     void check(float dt);
     void cacheImage(const std::string& filepath);
 public:

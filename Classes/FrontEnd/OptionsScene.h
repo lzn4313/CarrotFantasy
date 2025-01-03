@@ -2,8 +2,6 @@
 #define __Options_SCENE_H__
 
 #include "cocos2d.h"
-#include "ui/CocosGUI.h"
-
 USING_NS_CC;
 
 
@@ -125,6 +123,8 @@ public:
 };
 class StatisticsState : public OptionsState {
     void enter(OptionsScene* scene) {
+        scene->statisticsLayer->removeAllChildrenWithCleanup(true);
+        scene->statisticsLayer->init();
         scene->statisticsLayer->setVisible(true);
         scene->statistics_btn->setEnabled(false);
         scene->statistics_btn->setScale(1);

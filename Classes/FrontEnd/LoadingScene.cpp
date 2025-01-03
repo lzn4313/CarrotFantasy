@@ -34,6 +34,8 @@ void LoadingScene::loadSource() {
     
     loadMenu();
     loadOptions();
+    loadHelper();
+
     numberOfLoadedRes = 1;
 }
 //ª∫¥Ê≤Àµ•ΩÁ√ÊÕº∆¨
@@ -102,6 +104,102 @@ void LoadingScene::loadOptions() {
     //»À‘±≤„
     cacheImage("OptionsScene/SettingBG3.PNG");
 
+}
+//ª∫¥Ê∞Ô÷˙ΩÁ√ÊÕº∆¨
+void LoadingScene::loadHelper() {
+    //ª∫¥Ê ˝◊÷
+    cacheImage("HelperScene/num_-1.png");
+    cacheImage("HelperScene/num_1.png");
+    cacheImage("HelperScene/num_2.png");
+    cacheImage("HelperScene/num_3.png");
+    cacheImage("HelperScene/num_4.png");
+    cacheImage("HelperScene/num_5.png");
+    cacheImage("HelperScene/num_6.png");
+    cacheImage("HelperScene/num_7.png");
+    cacheImage("HelperScene/num_8.png");
+    cacheImage("HelperScene/num_9.png");
+    cacheImage("HelperScene/num_10.png");
+    //ª∫¥Ê±≥æ∞
+    cacheImage("HelperScene/help_3-hd_bg.png");
+    //ª∫¥Ê≤Àµ•∞¥≈•
+    cacheImage("HelperScene/help_1-hd_67.PNG");
+    cacheImage("HelperScene/help_1-hd_38.PNG");
+    cacheImage("HelperScene/help_1-hd-33_normal.PNG");
+    cacheImage("HelperScene/help_1-hd_33.PNG");
+    cacheImage("HelperScene/help_1-hd_71_normal.PNG");
+    cacheImage("HelperScene/help_1-hd_71.png");
+    cacheImage("HelperScene/help_1-hd_66_normal.PNG");
+    cacheImage("HelperScene/help_1-hd_66.PNG");
+    //ª∫¥Ê∞Ô÷˙ΩÁ√Ê   
+    cacheImage("HelperScene/help_3-hd_1.png");
+    cacheImage("HelperScene/help_1-hd_73.PNG");
+    cacheImage("HelperScene/help_3-hd_2.png");
+    cacheImage("HelperScene/help_1-hd_4.PNG");
+    cacheImage("HelperScene/help_3-hd_3.png");
+    cacheImage("HelperScene/help_1-hd_50.PNG");
+    cacheImage("HelperScene/help_3-hd_4.png");
+    cacheImage("HelperScene/help_1-hd_65.PNG");
+    cacheImage("HelperScene/help_1-hd_0.PNG");
+    //ª∫¥Êπ÷ŒÔΩÁ√Ê
+    cacheImage("HelperScene/help_3-hd_monster.png");
+    cacheImage("HelperScene/help_1-hd_14.PNG");
+    cacheImage("HelperScene/help_1-hd_1.PNG");
+    cacheImage("HelperScene/help_1-hd_2.PNG");
+    cacheImage("HelperScene/help_1-hd_3.PNG");
+    cacheImage("HelperScene/help_1-hd_29.PNG");
+    cacheImage("HelperScene/help_1-hd_39.PNG");
+    //ª∫¥Ê≈⁄Ã®ΩÁ√Ê
+    cacheImage("HelperScene/tower_1.png");
+    cacheImage("HelperScene/tower_2.png");
+    cacheImage("HelperScene/tower_3.png");
+    cacheImage("HelperScene/tower_4.png");
+    cacheImage("HelperScene/tower_5.png");
+    cacheImage("HelperScene/tower_6.png");
+    cacheImage("HelperScene/tower_7.png");
+    cacheImage("HelperScene/tower_8.png");
+    cacheImage("HelperScene/tower_9.png");
+    cacheImage("HelperScene/tower_10.png");
+}
+//ª∫¥Ê”Œœ∑—°‘ÒΩÁ√ÊÕº∆¨
+void LoadingScene::loadGameSelection() {
+    //º”‘ÿ±≥æ∞
+    cacheImage("GameSelectionScene/stages_bg-hd_0.PNG");
+    //º”‘ÿ≤Àµ•
+    cacheImage("GameSelectionScene/stages_bg-hd_42.PNG");
+    cacheImage("GameSelectionScene/stages_bg-hd_33.PNG");
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
+    cacheImage();
 }
 void LoadingScene::check(float dt)
 {

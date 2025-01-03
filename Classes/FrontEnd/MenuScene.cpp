@@ -5,11 +5,6 @@
 #include"Config/sound&music.h"
 #include"Config/GameData.h"
 USING_NS_CC;
-/*¥ÌŒÛ¥¶¿Ì*/
-static void problemLoading(const char* filename)
-{
-    printf("Error while loading: %s\n", filename);
-}
 /************************************  MenuScene¿‡  *********************************/
 Scene* MenuScene::createScene()
 {

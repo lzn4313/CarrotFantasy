@@ -1,12 +1,17 @@
 #ifndef __GameSelection_SCENE_H__
 #define __GameSelection_SCENE_H__
 
-#include "cocos2d.h"
-#include"ui/CocosGUI.h"
-using namespace cocos2d::ui;
 //冒险模式选关界面类
 class GameSelectionScene : public cocos2d::Scene
 {
+private:
+    Size visibleSize;
+
+    void initBackGround();
+    void initMenu();
+    void initBigLevelLayer();
+
+    void gotoHelper(Ref* psender);
 public:
     //构造函数
     static cocos2d::Scene* createScene();//继承创建场景
@@ -15,6 +20,20 @@ public:
 };
 //选大关界面
 class BigLevelLayer : public cocos2d::Layer {
+private:
+    Size visibleSize;
+
+    static const int totalPage = 4;
+    std::string numImage[totalPage];
+    float pagesPoint[totalPage];
+    int currentPage;
+
+    void initSlideLayer();
+    void initListener();
+
+    void nextPage();
+    void lastPage();
+    void rollBack();
 public:
     //构造函数
     static cocos2d::Layer* createLayer();//继承创建场景
@@ -38,6 +57,20 @@ public:
 //选天际小关界面
 class Level_1_Layer :public cocos2d::Layer
 {
+private:
+    Size visibleSize;
+
+    static const int totalPage = 4;
+    std::string numImage[totalPage];
+    float pagesPoint[totalPage];
+    int currentPage;
+
+    void initSlideLayer();
+    void initListener();
+
+    void nextPage();
+    void lastPage();
+    void rollBack();
 public:
     //构造函数
     static cocos2d::Layer* createLayer();//继承创建场景

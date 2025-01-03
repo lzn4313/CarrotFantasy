@@ -6,13 +6,7 @@
 #include"Config/GameData.h"
 #include<string>
 
-using namespace cocos2d::ui;
 USING_NS_CC;
-/*¥ÌŒÛ¥¶¿Ì*/
-static void problemLoading(const char* filename)
-{
-    printf("Error while loading: %s\n", filename);
-}
 /**********************   OptionsScene¿‡   ***********************************/
 Scene* OptionsScene::createScene()
 {
