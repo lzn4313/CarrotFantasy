@@ -16,9 +16,6 @@ extern const char level_1_1_map[7][12];
 extern vector<LevelPath>levelPath;
 extern int carrot_hp;
 extern char game_map[7][12];
-extern int monster_total;//击杀怪物总数
-extern int boss_total;//击杀boss总数
-extern int barrier_total;//摧毁障碍总数
 extern vector<Enemy*>monster;
 extern vector<Enemy*>barrier;
 extern Enemy* destination;
@@ -296,13 +293,13 @@ void Enemy::update(float dt)
 		}
 
 		if (enemy.type <= 1) {
-			monster_total++;
+			Facade::getInstance()->getTotalData()->setTotalMonster(Facade::getInstance()->getTotalData()->getTotalMonster()+1);
 		}
 		else if (enemy.type == 2) {
-			boss_total++;
+			Facade::getInstance()->getTotalData()->setTotalBoss(Facade::getInstance()->getTotalData()->getTotalBoss() + 1);
 		}
 		else {
-			barrier_total++;
+			Facade::getInstance()->getTotalData()->setTotalBarrier(Facade::getInstance()->getTotalData()->getTotalBarrier() + 1);
 			if (enemy.type == 3 || enemy.type == 4) {
 				game_map[enemy.position.i][enemy.position.j] = 0;
 			}

@@ -19,7 +19,25 @@ static void problemLoading(const char* filename)
     printf("Error while loading: %s\n", filename);
 }
 /**********************  全局变量  ***********************/
+<<<<<<< Updated upstream
 
+=======
+//关卡选项
+int level_selection;//关卡选择
+//游戏内数据
+int game_waves;//当前波数
+int max_waves;//总波数
+char game_map[7][12];//辅助地图数组
+int carrot_hp;//记录萝卜血量
+int carrot_level;//记录萝卜等级
+pos carrot_position;//记录萝卜位置
+int tower_available[3];//可建造防御塔存储
+Tower* tower_map[7][12];//储存防御塔信息的数组
+Enemy* destination;
+vector<LevelPath> levelPath;
+vector<Enemy*> barrier;
+vector<Enemy*> monster;
+>>>>>>> Stashed changes
 /**********************************  GameScene  ***********************************/
 Scene* GameScene::createScene()
 {
@@ -32,8 +50,17 @@ bool GameScene::init()
         return false;
     }
     /**********************  部分全局变量初始化  **********************/
+<<<<<<< Updated upstream
 
     Facade::getInstance()->clear();
+=======
+    Facade::getInstance()->getGameController()->resetGameController();//默认不加速
+    carrot_hp = 10;//默认萝卜血量10
+    //默认统计为0
+    Facade::getInstance()->getShop()->resetMoney();
+    Facade::getInstance()->getTotalData()->resetData();
+    destination = nullptr;
+>>>>>>> Stashed changes
     /**********************  选关  ******************************/
     auto level = LevelLayer::createLayer(level_selection);
     level->setName("PlayingLevel");
@@ -64,9 +91,7 @@ void GameScene::reset_menu() {
     //全局变量重置
     carrot_hp = 10;
     Facade::getInstance()->getShop()->resetMoney();
-    monster_total = 0;
-    boss_total = 0;
-    barrier_total = 0;
+    Facade::getInstance()->getTotalData()->resetData();
     destination = nullptr;
     Facade::getInstance()->getGameController()->resetGameController();//默认不加速
     this->scheduleUpdate();
@@ -308,9 +333,9 @@ void GameMenu::lose() {
     Facade::getInstance()->getGameController()->setPause(1);
     /*******************************  数据更新  *****************************/
     UserDefault::getInstance()->setIntegerForKey("money_statistics", UserDefault::getInstance()->getIntegerForKey("money_statistics") + Facade::getInstance()->getShop()->getTotalMoney());
-    UserDefault::getInstance()->setIntegerForKey("monster_statistics", UserDefault::getInstance()->getIntegerForKey("monster_statistics") + monster_total);
-    UserDefault::getInstance()->setIntegerForKey("boss_statistics", UserDefault::getInstance()->getIntegerForKey("boss_statistics") + boss_total);
-    UserDefault::getInstance()->setIntegerForKey("damage_statistics", UserDefault::getInstance()->getIntegerForKey("damage_statistics") + barrier_total);
+    UserDefault::getInstance()->setIntegerForKey("monster_statistics", UserDefault::getInstance()->getIntegerForKey("monster_statistics") + Facade::getInstance()->getTotalData()->getTotalMonster());
+    UserDefault::getInstance()->setIntegerForKey("boss_statistics", UserDefault::getInstance()->getIntegerForKey("boss_statistics") + Facade::getInstance()->getTotalData()->getTotalBoss());
+    UserDefault::getInstance()->setIntegerForKey("damage_statistics", UserDefault::getInstance()->getIntegerForKey("damage_statistics") + Facade::getInstance()->getTotalData()->getTotalBarrier());
     /********************************  显示  ******************************/
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -373,6 +398,7 @@ void GameMenu::lose() {
         static_cast<GameScene*>(this->getParent())->reset_menu();
         });
     options_menu->addChild(again_btn);
+    Facade::getInstance()->getShop()->setGameMoney(450);
     //选择关卡
     auto return_btn = MenuItemImage::create("/GameScene/return_normal.png", "/GameScene/return_selected.png");
     return_btn->setPosition(Vec2(visibleSize.width * 0.35, visibleSize.height * 0.3));
@@ -388,9 +414,9 @@ void GameMenu::win() {
     Facade::getInstance()->getGameController()->setPause(1);
     /*******************************  数据更新  *****************************/
     UserDefault::getInstance()->setIntegerForKey("money_statistics", UserDefault::getInstance()->getIntegerForKey("money_statistics") + Facade::getInstance()->getShop()->getTotalMoney());
-    UserDefault::getInstance()->setIntegerForKey("monster_statistics", UserDefault::getInstance()->getIntegerForKey("monster_statistics") + monster_total);
-    UserDefault::getInstance()->setIntegerForKey("boss_statistics", UserDefault::getInstance()->getIntegerForKey("boss_statistics") + boss_total);
-    UserDefault::getInstance()->setIntegerForKey("damage_statistics", UserDefault::getInstance()->getIntegerForKey("damage_statistics") + barrier_total);
+    UserDefault::getInstance()->setIntegerForKey("monster_statistics", UserDefault::getInstance()->getIntegerForKey("monster_statistics") + Facade::getInstance()->getTotalData()->getTotalMonster());
+    UserDefault::getInstance()->setIntegerForKey("boss_statistics", UserDefault::getInstance()->getIntegerForKey("boss_statistics") + Facade::getInstance()->getTotalData()->getTotalBoss());
+    UserDefault::getInstance()->setIntegerForKey("damage_statistics", UserDefault::getInstance()->getIntegerForKey("damage_statistics") + Facade::getInstance()->getTotalData()->getTotalBarrier());
     /********************************  显示  ******************************/
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
