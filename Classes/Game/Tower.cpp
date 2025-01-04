@@ -66,7 +66,6 @@ Sprite* Tower_body::createSprite()
 }*/
 
 
-
 class TowerFactory {
 public:
 	virtual Tower* createTower() = 0;
@@ -170,6 +169,237 @@ public:
 	}
 };
 
+
+
+class BulletFactory {
+public:
+	virtual Bullet* createBullet(Enemy* target, Tower_body* father) = 0;
+};
+
+class BottleBulletFactory : public BulletFactory {
+public:
+	Bullet* createBullet(Enemy* target, Tower_body* father) override {
+		Bullet* bullet = nullptr;
+		bullet = new BottleBullet(target, father);
+		return bullet;
+	}
+};
+
+class ShitBulletFactory : public BulletFactory {
+public:
+	Bullet* createBullet(Enemy* target, Tower_body* father) override {
+		Bullet* bullet = nullptr;
+		bullet = new ShitBullet(target, father);
+		return bullet;
+	}
+};
+
+class FanBulletFactory : public BulletFactory {
+public:
+	Bullet* createBullet(Enemy* target, Tower_body* father) override {
+		Bullet* bullet = nullptr;
+		bullet = new FanBullet(target, father);
+		return bullet;
+	}
+};
+
+class StarBulletFactory : public BulletFactory {
+public:
+	Bullet* createBullet(Enemy* target, Tower_body* father) override {
+		Bullet* bullet = nullptr;
+		bullet = new StarBullet(target, father);
+		return bullet;
+	}
+};
+
+class BottleBullet : public Bullet {
+public:
+	BottleBullet(Enemy* target, Tower_body* father) {
+		this->Target = target;
+		this->Father = father;
+		Vec2 my_position = this->Father->getPosition();
+
+		int tag = Tower_Bottle;
+		switch (this->Father->getInfo().level) {
+			case 1:
+				this->setTexture(str[tag - 1] + "bullet1.PNG");
+				break;
+			case 2:
+				this->setTexture(str[tag - 1] + "bullet2.PNG");
+				break;
+			case 3:
+				this->setTexture(str[tag - 1] + "bullet3.PNG");
+				break;
+			default:
+				break;
+		}
+
+		float dx, dy, r;
+		dx = target->getPosition().x - my_position.x;
+		dy = target->getPosition().y - my_position.y;
+		r = -atan2f(dy, dx) / M_PI * 180;
+
+		this->setPosition(my_position);
+		this->setRotation(r);
+
+		auto remove_bullet = CallFunc::create([=]() {
+			this->removeFromParent();
+			});
+
+		auto attacked = CallFunc::create([=]() {
+			if (target != nullptr)
+				target->declineHp(this->Father->getInfo(), 0);
+			});
+
+		auto bullet_move_to = cocos2d::MoveTo::create((if_speed_up == 0 ? 0.2 : (0.2 / 2)), target->getPosition());
+		this->runAction(Sequence::create(bullet_move_to, DelayTime::create(0), remove_bullet, DelayTime::create(0), attacked, nullptr));
+		this->Father->addChild(this);
+	}
+};
+
+class ShitBullet : public Bullet {
+public:
+	ShitBullet(Enemy* target, Tower_body* father) {
+		this->Target = target;
+		this->Father = father;
+		Vec2 my_position = this->Father->getPosition();
+
+		int tag = Tower_Shit;
+		switch (this->Father->getInfo().level) {
+			case 1:
+				this->setTexture(str[tag - 1] + "bullet1.PNG");
+				break;
+			case 2:
+				this->setTexture(str[tag - 1] + "bullet2.PNG");
+				break;
+			case 3:
+				this->setTexture(str[tag - 1] + "bullet3.PNG");
+				break;
+			default:
+				break;
+		}
+
+		float dx, dy, r;
+		dx = target->getPosition().x - my_position.x;
+		dy = target->getPosition().y - my_position.y;
+		r = -atan2f(dy, dx) / M_PI * 180;
+
+		this->setPosition(my_position);
+		this->setRotation(r);
+
+		auto remove_bullet = CallFunc::create([=]() {
+			this->removeFromParent();
+			});
+
+		auto attacked = CallFunc::create([=]() {
+			if (target != nullptr)
+				target->declineHp(this->Father->getInfo(), 0);
+			});
+
+		auto bullet_move_to = cocos2d::MoveTo::create((if_speed_up == 0 ? 0.25 : (0.25 / 2)), target->getPosition());
+		this->runAction(Sequence::create(bullet_move_to, DelayTime::create(0), remove_bullet, DelayTime::create(0), attacked, nullptr));
+		this->Father->addChild(this);
+	}
+};
+
+class FanBullet : public Bullet {
+public:
+	FanBullet(Enemy* target, Tower_body* father) {
+		this->Target = target;
+		this->Father = father;
+		Vec2 my_position = this->Father->getPosition();
+
+		int tag = Tower_Fan;
+		switch (this->Father->getInfo().level) {
+			case 1:
+				this->setTexture(str[tag - 1] + "bullet1.PNG");
+				break;
+			case 2:
+				this->setTexture(str[tag - 1] + "bullet2.PNG");
+				break;
+			case 3:
+				this->setTexture(str[tag - 1] + "bullet3.PNG");
+				break;
+			default:
+				break;
+		}
+
+		float dx, dy, r;
+		dx = target->getPosition().x - my_position.x;
+		dy = target->getPosition().y - my_position.y;
+		r = -atan2f(dy, dx) / M_PI * 180;
+
+		this->setPosition(my_position);
+		this->setRotation(r);
+	}
+};
+
+class StarBullet : public Bullet {
+public:
+	StarBullet(Enemy* target, Tower_body* father) {
+		this->Target = target;
+		this->Father = father;
+		Vec2 my_position = this->Father->getPosition();
+
+		int tag = Tower_Star;
+		switch (this->Father->getInfo().level) {
+			case 1:
+				this->setTexture(str[tag - 1] + "bullet1.PNG");
+				break;
+			case 2:
+				this->setTexture(str[tag - 1] + "bullet2.PNG");
+				break;
+			case 3:
+				this->setTexture(str[tag - 1] + "bullet3.PNG");
+				break;
+			default:
+				break;
+		}
+
+		float dx, dy, r;
+		dx = target->getPosition().x - my_position.x;
+		dy = target->getPosition().y - my_position.y;
+		r = -atan2f(dy, dx) / M_PI * 180;
+
+		this->setPosition(my_position);
+		auto remove_bullet = CallFunc::create([=]() {
+			this->removeFromParent();
+			});
+
+		auto attacked = CallFunc::create([=]() {
+			if (target != nullptr) {
+				Vec2 devided;
+				if (target->declineHp(this->Father->getInfo(), 0)) {
+					for (Enemy* enemy : monster) {
+						devided = enemy->getPosition();
+						if (((target->getPositionX() - devided.x) * (target->getPositionX() - devided.x) +
+							(target->getPositionY() - devided.y) * (target->getPositionY() - devided.y))
+							<= (160 * 160) * (this->Father->getInfo().attack_range + 1) / 2)
+						{
+							enemy->declineHp(this->Father->getInfo(), 1);
+						}
+					}
+				}
+			}
+			});
+
+		auto bullet_move_to = cocos2d::MoveTo::create(if_speed_up == 0 ? 0.33 : 0.33 / 2, target->getPosition());
+		auto rotate = Spawn::create(bullet_move_to, Repeat::create(RotateBy::create(if_speed_up == 0 ? 0.33 : 0.33 / 2, 360), 1), nullptr);
+		this->runAction(Sequence::create(rotate, DelayTime::create(0), remove_bullet, DelayTime::create(0), attacked, nullptr));
+		this->Father->addChild(this);
+	}
+};
+
+
+
+bool Bullet::init()
+{
+	if (!Sprite::init())
+		return false;
+	this->scheduleUpdate();
+	return true;
+}
+
 bool Tower_body::init()
 {
 	if (!Sprite::init())
@@ -184,29 +414,17 @@ void Tower_body::update(float dt)
 	if (if_pause == 0) {
 		time += dt;
 		Vec2 my_position = this->getPosition();
-		Vec2 enemy_position;
+		//Vec2 enemy_position;
 		Enemy* target = nullptr;
 		extern Enemy* destination;
 
-		if (destination != nullptr)
-			enemy_position = destination->getPosition();
-
-		if (destination != nullptr && ((my_position.x - enemy_position.x) * (my_position.x - enemy_position.x) +
-			(my_position.y - enemy_position.y) * (my_position.y - enemy_position.y))
-			<= ((tower_information.attack_range * 80 * 1.414) * (tower_information.attack_range * 80 * 1.414) +
-				(destination->getContentSize().width / 2) * (destination->getContentSize().width / 2) +
-				(destination->getContentSize().height / 2) * (destination->getContentSize().height / 2)))
+		if (destination != nullptr && this->is_in_range(destination))
 		{
 			target = destination;
 		}
 		else {
 			for (Enemy* enemy : monster) {
-				enemy_position = enemy->getPosition();
-				if (((my_position.x - enemy_position.x) * (my_position.x - enemy_position.x) +
-					(my_position.y - enemy_position.y) * (my_position.y - enemy_position.y))
-					<= ((tower_information.attack_range * 80 * 1.414) * (tower_information.attack_range * 80 * 1.414) +
-						(enemy->getContentSize().width / 2) * (enemy->getContentSize().width / 2) +
-						(enemy->getContentSize().height / 2) * (enemy->getContentSize().height / 2)))
+				if (this->is_in_range(enemy))
 				{
 					target = enemy;
 					break;
@@ -223,8 +441,7 @@ void Tower_body::update(float dt)
 				float dx, dy, r;
 				dx = target->getPosition().x - my_position.x;
 				dy = target->getPosition().y - my_position.y;
-				r = -atan2f(dy, dx) / 3.14159 * 180;
-				string str[4] = { "/Tower/Bottle/" ,"/Tower/Shit/", "/Tower/Fan/","/Tower/Star/" };
+				r = -atan2f(dy, dx) / M_PI * 180;
 
 				if (tower_information.name_tag == Tower_Bottle) {
 					SoundManager::getInstance()->bottle_atk_sound_effect();
@@ -250,6 +467,13 @@ void Tower_body::update(float dt)
 							break;
 					}
 					this->runAction(Sequence::create(Animate::create(Animation::createWithSpriteFrames(frame, 0.1)), nullptr));
+
+					Bullet* bullet = nullptr;
+					BulletFactory* factory = new BottleBulletFactory();
+					bullet = factory->createBullet(target, this);
+					//this->addChild(bullet);
+
+					/*
 					auto bullet = Sprite::create();
 					switch (tower_information.level)
 					{
@@ -279,7 +503,7 @@ void Tower_body::update(float dt)
 					bullet->setRotation(r);
 					auto bullet_move_to = cocos2d::MoveTo::create(if_speed_up == 0 ? 0.2 : 0.2 / 2, target->getPosition());
 					bullet->runAction(Sequence::create(bullet_move_to, DelayTime::create(0), remove_bullet, DelayTime::create(0), attacked, nullptr));
-					ThisLayer->addChild(bullet);
+					ThisLayer->addChild(bullet);*/
 				}
 				else if (tower_information.name_tag == Tower_Shit) {
 					SoundManager::getInstance()->shit_atk_sound_effect();
@@ -306,6 +530,13 @@ void Tower_body::update(float dt)
 							break;
 					}
 					this->runAction(Sequence::create(Animate::create(Animation::createWithSpriteFrames(frame, 0.1)), nullptr));
+
+					Bullet* bullet = nullptr;
+					BulletFactory* factory = new ShitBulletFactory();
+					bullet = factory->createBullet(target, this);
+					//this->addChild(bullet);
+
+					/*
 					auto bullet = Sprite::create();
 					switch (tower_information.level)
 					{
@@ -335,7 +566,7 @@ void Tower_body::update(float dt)
 					bullet->setRotation(r);
 					auto bullet_move_to = cocos2d::MoveTo::create((if_speed_up == 0 ? 0.25 : (0.25 / 2)), target->getPosition());
 					bullet->runAction(Sequence::create(bullet_move_to, DelayTime::create(0), remove_bullet, DelayTime::create(0), attacked, nullptr));
-					ThisLayer->addChild(bullet);
+					ThisLayer->addChild(bullet);*/
 				}
 				else if (tower_information.name_tag == Tower_Star) {
 					SoundManager::getInstance()->star_atk_sound_effect();
@@ -363,6 +594,13 @@ void Tower_body::update(float dt)
 					}
 
 					this->runAction(Sequence::create(Animate::create(Animation::createWithSpriteFrames(frame, 0.11)), nullptr));
+
+					Bullet* bullet = nullptr;
+					BulletFactory* factory = new StarBulletFactory();
+					bullet = factory->createBullet(target, this);
+					//this->addChild(bullet);
+
+					/*
 					auto bullet = Sprite::create();
 					switch (tower_information.level)
 					{
@@ -404,11 +642,26 @@ void Tower_body::update(float dt)
 					auto bullet_move_to = cocos2d::MoveTo::create(if_speed_up == 0 ? 0.33 : 0.33 / 2, target->getPosition());
 					auto rotate = Spawn::create(bullet_move_to, Repeat::create(RotateBy::create(if_speed_up == 0 ? 0.33 : 0.33 / 2, 360), 1), nullptr);
 					bullet->runAction(Sequence::create(rotate, DelayTime::create(0), remove_bullet, DelayTime::create(0), attacked, nullptr));
-					ThisLayer->addChild(bullet);
+					ThisLayer->addChild(bullet);*/
 				}
 			}
 		}
 	}
+}
+
+/*判断目标是否在攻击范围内*/
+bool Tower_body::is_in_range(Enemy* Target) {
+	if (Target != nullptr) {
+		Vec2 my_position = this->getPosition();
+		Vec2 target_position = Target->getPosition();
+		Tower_information info = this->getInfo();
+		if (pow((my_position.x - target_position.x), 2) + pow((my_position.y - target_position.y), 2)
+			<= pow((info.attack_range * 80 * sqrt(2)), 2) + pow((Target->getContentSize().width / 2), 2) + pow((Target->getContentSize().height / 2), 2))
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 /*升级炮台*/
@@ -557,12 +810,16 @@ Tower* build_tower(int tag)
 		{
 			case Tower_Bottle:
 				factory = new BottleFactory();
+				break;
 			case Tower_Shit:
 				factory = new ShitFactory();
+				break;
 			case Tower_Fan:
 				factory = new FanFactory();
+				break;
 			case Tower_Star:
 				factory = new StarFactory();
+				break;
 			default:
 				break;
 		}
@@ -570,21 +827,5 @@ Tower* build_tower(int tag)
 			tower = factory->createTower();
 		}
 	}
-
-	/*
-	//利用帧动画完成建造特效
-	auto Effect = Sprite::create();
-	Vector<SpriteFrame*> frame;
-	frame.pushBack(SpriteFrame::create(str[4] + "Items02-hd_1.PNG", Rect(0, 0, 161, 133)));
-	frame.pushBack(SpriteFrame::create(str[4] + "Items02-hd_2.PNG", Rect(0, 0, 169, 175)));
-	frame.pushBack(SpriteFrame::create(str[4] + "Items02-hd_3.PNG", Rect(0, 0, 199, 224)));
-	frame.pushBack(SpriteFrame::create(str[4] + "Items02-hd_4.PNG", Rect(0, 0, 242, 243)));
-	auto remove_effect = CallFunc::create([=]() {
-		this_layer->removeChild(Effect);
-		});
-	Effect->runAction(Sequence::create(Animate::create(Animation::createWithSpriteFrames(frame, 0.05)), remove_effect, nullptr));
-	Effect->setPosition(vec.x, vec.y);
-	this_layer->addChild(Effect);*/
-
 	return tower;
 }

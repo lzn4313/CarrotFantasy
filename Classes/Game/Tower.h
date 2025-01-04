@@ -22,8 +22,6 @@ const int Tower_Value[4] = { 100,120,160,160 };
 const float Tower_Attack[4] = { 50,20,60,80 };
 const float Tower_Attack_Speed[4] = { 8,4,4,3 };
 
-class Tower_body;
-
 struct Tower_information {
 	int name_tag;//记录名称标签
 	int value;//记录当前价值
@@ -39,19 +37,15 @@ struct Tower_information {
 
 };
 
-/*
 class Bullet :public cocos2d::Sprite {
-	friend class Tower_body;
-private:
-	Enemy* Target;
-	Tower_body* Farther;
+protected:
+	Enemy* Target = nullptr;
+	Tower_body* Father = nullptr;
 public:
-	//构造函数
-	static cocos2d::Sprite* createSprite();
 	virtual bool init();
 	virtual void update(float dt);//实时判断范围内是否有敌人，有则攻击
-	CREATE_FUNC(Bullet);
-};*/
+	//CREATE_FUNC(Bullet);
+};
 
 class Tower_body :public cocos2d::Sprite {
 protected:
@@ -66,6 +60,7 @@ public:
 	virtual void update(float dt);//实时判断范围内是否有敌人，有则攻击
 	Tower_information getInfo() { return tower_information; }
 	void setInfo(Tower_information info) { this->tower_information = info; }
+	bool is_in_range(Enemy* Target);//判断目标是否在攻击范围内
 	//CREATE_FUNC(Tower_body);
 };
 
