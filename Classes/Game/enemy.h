@@ -1,6 +1,6 @@
 #pragma once
 #include "cocos2d.h"
-#include "Game/GameScene.h"
+#include "GameScene.h"
 
 #define BARRIER 0
 #define MONSTER 1
@@ -56,7 +56,7 @@ struct Enemy_information {
 	int damage;                                   //对萝卜造成的伤害
 	cocos2d::Sprite* enemy_picture;               //障碍贴图
 	int count;                                    //走过的格子数
-	double time = 0;                                 //记录生效时间
+	double time = 0;                               //记录生效时间
 	int origin_speed;                             //记录常态化速度
 	int full_hp;                                  //记录满血血量
 	float total_length = 0;						  //记录走过的路程长度
@@ -82,5 +82,8 @@ public:
 	virtual void update(float dt);
 	void setType(int selection);
 	void set_position(pos _position) { enemy.position = _position; }
+	void move(float dt);
+	void showHp(int appear_waves);
+	void death();
 	bool declineHp(Tower_information tower, int op);
 };

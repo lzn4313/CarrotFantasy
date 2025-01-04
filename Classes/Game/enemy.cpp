@@ -173,7 +173,108 @@ void Enemy::update(float dt)
 		}
 	}
 	//对于移动的判断
-	if (if_pause == 0&&enemy.speed>0) {//无暂停和速度大于0(即非障碍物)则动
+	this->move(dt);
+	if (levelPath[enemy.count].direction == 'o') {
+		this->removeFromParent(); 
+		return;
+	}
+
+	//显示血条
+	if (enemy.hp > 0&&enemy.hp<enemy.full_hp) {
+		this->showHp(appear_waves);
+	}
+	//没血了就消失
+	else if(enemy.hp<=0){
+		this->death();
+		this->removeFromParent();
+		return;
+	}
+}
+
+bool Enemy::declineHp(Tower_information tower, int op)
+{
+	if (enemy.hp > 0 && tower.attack > 0) {
+		if (op == 0) {
+			Vec2 currentPosition = this->getPosition();
+			Vector<SpriteFrame*> attacked;
+			auto sprite = Sprite::create();
+			enemy.hp -= tower.attack;
+			//主要目标受击动画
+			switch (tower.name_tag) {
+				case Tower_Bottle:
+					attacked.pushBack(SpriteFrame::create("/Tower/Bottle/ID1_20.PNG", Rect(0, 0, 28, 29)));
+					attacked.pushBack(SpriteFrame::create("/Tower/Bottle/ID1_10.PNG", Rect(0, 0, 64, 60)));
+					break;
+				case Tower_Shit:
+					attacked.pushBack(SpriteFrame::create("/Tower/Shit/ID2_41.PNG", Rect(0, 0, 22, 21)));
+					attacked.pushBack(SpriteFrame::create("/Tower/Shit/ID2_13.PNG", Rect(0, 0, 52, 47)));
+					break;
+				case Tower_Fan:
+					attacked.pushBack(SpriteFrame::create("/Tower/Fan/ID4_14.PNG", Rect(0, 0, 61, 66)));
+					attacked.pushBack(SpriteFrame::create("/Tower/Fan/ID4_15.PNG", Rect(0, 0, 79, 87)));
+					break;
+				case Tower_Star:
+					attacked.pushBack(SpriteFrame::create("/Tower/Star/ID3_78.PNG", Rect(0, 0, 30, 30)));
+					attacked.pushBack(SpriteFrame::create("/Tower/Star/ID3_94.PNG", Rect(0, 0, 52, 52)));
+					attacked.pushBack(SpriteFrame::create("/Tower/Star/ID3_79.PNG", Rect(0, 0, 103, 104)));
+					attacked.pushBack(SpriteFrame::create("/Tower/Star/ID3_57.PNG", Rect(0, 0, 148, 144)));
+					attacked.pushBack(SpriteFrame::create("/Tower/Star/ID3_22.PNG", Rect(0, 0, 192, 189)));
+					attacked.pushBack(SpriteFrame::create("/Tower/Star/ID3_21.PNG", Rect(0, 0, 217, 212)));
+			}
+			sprite->runAction(Repeat::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(attacked, 0.05 / (1 + if_speed_up))), FadeOut::create(0.2 / (1 + if_speed_up)), nullptr), 1));
+			sprite->setPosition(Vec2(this->getContentSize().width / 2, this->getContentSize().height / 2));
+			this->addChild(sprite);
+
+			if (enemy.origin_speed != 0) {//非障碍判断
+				if (tower.attack_special == Slow) {
+					if (tower.level == 1)
+						enemy.speed = enemy.origin_speed * 0.8;
+					else if (tower.level == 2||tower.level == 3)
+						enemy.speed = enemy.origin_speed * 0.6;
+					if (tower.name_tag == Tower_Shit && enemy.time == 0) {
+						auto slowByShit = Sprite::create();
+						Vector<SpriteFrame*>shit;
+						//减速动画
+						shit.pushBack(SpriteFrame::create("/Tower/Shit/ID2_1.PNG", Rect(0, 0, 80, 21)));
+						shit.pushBack(SpriteFrame::create("/Tower/Shit/ID2_10.PNG", Rect(0, 0, 78, 18)));
+						slowByShit->runAction(RepeatForever::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(shit, 0.1)), nullptr)));
+						slowByShit->setPosition(Vec2(this->getContentSize().width / 2, 0));
+						slowByShit->setName("shit");
+						this->addChild(slowByShit);
+					}
+					enemy.time = 0;
+				}
+			}
+		}
+		//设置星星溅射目标受击动画
+		else if (op == 1 && tower.name_tag == Tower_Star) {
+			Vec2 currentPosition = this->getPosition();
+			auto sprite = Sprite::create();
+			enemy.hp -= tower.attack * 0.3;
+			switch (tower.level) {
+				case 1:
+				case 2:
+					sprite->setTexture("/Tower/Star/ID3_73.PNG");
+					break;
+				case 3:
+					sprite->setTexture("/Tower/Star/ID3_85.PNG");
+					break;
+				default:
+					break;
+			}
+			sprite->runAction(Sequence::create(Blink::create(0.3 / (1 + if_speed_up), 1), FadeOut::create(0.1 / (1 + if_speed_up)), nullptr));
+			sprite->setPosition(Vec2(this->getContentSize().width / 2, this->getContentSize().height / 2));
+			this->addChild(sprite);
+		}
+		return true;
+	}
+	return false;
+}
+
+//移动函数
+void Enemy::move(float dt)
+{
+	if (if_pause == 0 && enemy.speed > 0) {//无暂停和速度大于0(即非障碍物)则动
 		int x = this->getPositionX();
 		int y = this->getPositionY();
 		static vec2 startPosition = trans_ij_to_xy(levelPath[0].point);
@@ -201,7 +302,7 @@ void Enemy::update(float dt)
 		}
 		double this_x = enemy.speed * (if_speed_up + 1) * dt * ix;
 		double this_y = enemy.speed * (if_speed_up + 1) * dt * iy;
-		if (enemy.count + 1!=levelPath.size()) {
+		if (enemy.count + 1 != levelPath.size()) {
 			vec2 nextPosition;
 			nextPosition = trans_ij_to_xy(levelPath[enemy.count + 1].point);
 			enemy.total_length = enemy.total_length + fabs(this_x) + fabs(this_y);
@@ -209,23 +310,24 @@ void Enemy::update(float dt)
 			if (enemy.type == FLY) {
 				range = 6;
 			}
-			if (((fabs(x + this_x - nextPosition.x) < range)||ix==0) && ((fabs(y + this_y - nextPosition.y) < range)||iy==0))
+			if (((fabs(x + this_x - nextPosition.x) < range) || ix == 0) && ((fabs(y + this_y - nextPosition.y) < range) || iy == 0))
 				enemy.count++;
 		}
-		
+
 		this->setPosition(Vec2(x + this_x, y + this_y));
 		if (levelPath[enemy.count].direction == 'o') {
+			this->unscheduleUpdate();
 			SoundManager::getInstance()->carrot_eaten_sound_effect();
 			carrot_hp -= enemy.damage;
 			Vector<SpriteFrame*> death;
-			death.pushBack(SpriteFrame::create("/Enemy/monster/1.PNG",Rect(0,0,109,99)));
+			death.pushBack(SpriteFrame::create("/Enemy/monster/1.PNG", Rect(0, 0, 109, 99)));
 			death.pushBack(SpriteFrame::create("/Enemy/monster/2.PNG", Rect(0, 0, 111, 114)));
 			death.pushBack(SpriteFrame::create("/Enemy/monster/3.PNG", Rect(0, 0, 194, 197)));
 			death.pushBack(SpriteFrame::create("/Enemy/monster/4.PNG", Rect(0, 0, 256, 211)));
 			death.pushBack(SpriteFrame::create("/Enemy/monster/5.PNG", Rect(0, 0, 154, 163)));
 			death.pushBack(SpriteFrame::create("/Enemy/monster/6.PNG", Rect(0, 0, 275, 277)));
 			auto sprite = Sprite::create();
-			vec2 nextPosition = trans_ij_to_xy(levelPath[levelPath.size()-1].point);
+			vec2 nextPosition = trans_ij_to_xy(levelPath[levelPath.size() - 1].point);
 			sprite->runAction(Repeat::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(death, 0.05 / (1 + if_speed_up))), FadeOut::create(0.2 / (1 + if_speed_up)), CallFunc::create([sprite]() {sprite->removeFromParent(); }), nullptr), 1));
 			sprite->setPosition(Vec2(nextPosition.x, nextPosition.y));
 			this->getParent()->addChild(sprite);
@@ -238,171 +340,97 @@ void Enemy::update(float dt)
 			else {
 				barrier.erase(find_if(barrier.begin(), barrier.end(), [this](const Enemy* enemy) {return enemy == this; }));
 			}
-			this->removeFromParent();
+			//this->removeFromParent();
 			return;
 		}
 
 
 
 	}
-
-	//显示血条
-	if (enemy.hp > 0&&enemy.hp<enemy.full_hp) {
-		int special_hp=0;
-		auto hpHolder = Sprite::create("/Enemy/monster/HpHolder.PNG");
-		auto hpSlider = Sprite::create("/Enemy/monster/HpSlider.PNG");
-		if (enemy.full_hp == MONSTER_HUGE_HP * appear_waves / 2)
-			 special_hp = 1;
-		
-		hpHolder->setScaleX(1 + special_hp);
-		hpSlider->setScaleX((1 + special_hp)* float(enemy.hp) / float(enemy.full_hp));
-		this->removeChildByTag(0);
-		this->removeChildByTag(1);
-		Vec2 currentPosition = this->getPosition();
-		hpSlider->setAnchorPoint(Vec2(0, 0.5));
-		
-		hpHolder->setPosition(Vec2(this->getContentSize().width/2, this->getContentSize().height+10));
-		hpHolder->setTag(0);
-		hpSlider->setTag(1);
-		this->addChild(hpHolder,1);
-		currentPosition = hpHolder->getAnchorPoint();
-		hpSlider->setPosition((Vec2(this->getContentSize().width / 2-float(hpHolder->getContentSize().width)*48/52*0.5*(1+special_hp), this->getContentSize().height + 10)));
-		this->addChild(hpSlider, 2);
-	}
-	//没血了就消失
-	else if(enemy.hp<=0){
-		if (enemy.type == NORMAL) {
-			SoundManager::getInstance()->normal_dead_sound_effect();
-		}
-		else if (enemy.type == FLY) {
-			SoundManager::getInstance()->fly_dead_sound_effect();
-		}
-		else if (enemy.type == BOSS) {
-			SoundManager::getInstance()->boss_dead_sound_effect();
-		}
-		Vector<SpriteFrame*> death;
-		death.pushBack(SpriteFrame::create("/Enemy/monster/1.PNG", Rect(0, 0, 109, 99)));
-		death.pushBack(SpriteFrame::create("/Enemy/monster/2.PNG", Rect(0, 0, 111, 114)));
-		death.pushBack(SpriteFrame::create("/Enemy/monster/3.PNG", Rect(0, 0, 194, 197)));
-		death.pushBack(SpriteFrame::create("/Enemy/monster/4.PNG", Rect(0, 0, 256, 211)));
-		death.pushBack(SpriteFrame::create("/Enemy/monster/5.PNG", Rect(0, 0, 154, 163)));
-		death.pushBack(SpriteFrame::create("/Enemy/monster/6.PNG", Rect(0, 0, 275, 277)));
-		auto sprite = Sprite::create();
-		sprite->runAction(Repeat::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(death, 0.05 / (1 + if_speed_up))), FadeOut::create(0.2 / (1 + if_speed_up)), CallFunc::create([sprite]() {sprite->removeFromParent(); }), nullptr), 1));
-		sprite->setPosition(Vec2(this->getPositionX(), this->getPositionY()));
-		this->getParent()->addChild(sprite);
-		money_total += enemy.coin;
-		game_money += enemy.coin;
-		if (destination == this) {
-			destination = nullptr;
-		}
-
-		if (enemy.type <= 1) {
-			monster_total++;
-		}
-		else if (enemy.type == 2) {
-			boss_total++;
-		}
-		else {
-			barrier_total++;
-			if (enemy.type == 3 || enemy.type == 4) {
-				game_map[enemy.position.i][enemy.position.j] = 0;
-			}
-			else if (enemy.type == 5 || enemy.type == 6) {
-				game_map[enemy.position.i][enemy.position.j] = 0;
-				game_map[enemy.position.i][enemy.position.j + 1] = 0;
-			}
-			else if (enemy.type == 7 || enemy.type == 8) {
-				game_map[enemy.position.i][enemy.position.j] = 0;
-				game_map[enemy.position.i][enemy.position.j + 1] = 0;
-				game_map[enemy.position.i - 1][enemy.position.j] = 0;
-				game_map[enemy.position.i - 1][enemy.position.j + 1] = 0;
-			}
-		}
-		if (enemy.type <= 2) {
-			monster.erase(find_if(monster.begin(), monster.end(), [this](const Enemy* enemy) {return enemy == this; }));
-		}
-		else {
-			barrier.erase(find_if(barrier.begin(), barrier.end(), [this](const Enemy* enemy) {return enemy == this; }));
-		}
-		this->removeFromParent();
-		return;
-	}
 }
 
-bool Enemy::declineHp(Tower_information tower, int op)
+//显示血条
+void Enemy::showHp(int appear_waves)
 {
-	if (enemy.hp > 0 && tower.attack > 0) {
-		if (op == 0) {
-			Vec2 currentPosition = this->getPosition();
-			Vector<SpriteFrame*> attacked;
-			auto sprite = Sprite::create();
-			enemy.hp -= tower.attack;
-			switch (tower.name_tag) {
-				case Tower_Bottle:
-					attacked.pushBack(SpriteFrame::create("/Tower/Bottle/ID1_20.PNG", Rect(0, 0, 28, 29)));
-					attacked.pushBack(SpriteFrame::create("/Tower/Bottle/ID1_10.PNG", Rect(0, 0, 64, 60)));
-					break;
-				case Tower_Shit:
-					attacked.pushBack(SpriteFrame::create("/Tower/Shit/ID2_41.PNG", Rect(0, 0, 22, 21)));
-					attacked.pushBack(SpriteFrame::create("/Tower/Shit/ID2_13.PNG", Rect(0, 0, 52, 47)));
-					break;
-				case Tower_Fan:
-					attacked.pushBack(SpriteFrame::create("/Tower/Fan/ID4_14.PNG", Rect(0, 0, 61, 66)));
-					attacked.pushBack(SpriteFrame::create("/Tower/Fan/ID4_15.PNG", Rect(0, 0, 79, 87)));
-					break;
-				case Tower_Star:
-					attacked.pushBack(SpriteFrame::create("/Tower/Star/ID3_78.PNG", Rect(0, 0, 30, 30)));
-					attacked.pushBack(SpriteFrame::create("/Tower/Star/ID3_94.PNG", Rect(0, 0, 52, 52)));
-					attacked.pushBack(SpriteFrame::create("/Tower/Star/ID3_79.PNG", Rect(0, 0, 103, 104)));
-					attacked.pushBack(SpriteFrame::create("/Tower/Star/ID3_57.PNG", Rect(0, 0, 148, 144)));
-					attacked.pushBack(SpriteFrame::create("/Tower/Star/ID3_22.PNG", Rect(0, 0, 192, 189)));
-					attacked.pushBack(SpriteFrame::create("/Tower/Star/ID3_21.PNG", Rect(0, 0, 217, 212)));
-			}
-			sprite->runAction(Repeat::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(attacked, 0.05 / (1 + if_speed_up))), FadeOut::create(0.2 / (1 + if_speed_up)), nullptr), 1));
-			sprite->setPosition(Vec2(this->getContentSize().width / 2, this->getContentSize().height / 2));
-			this->addChild(sprite);
+	int special_hp = 0;
+	auto hpHolder = Sprite::create("/Enemy/monster/HpHolder.PNG");
+	auto hpSlider = Sprite::create("/Enemy/monster/HpSlider.PNG");
+	if (enemy.full_hp == MONSTER_HUGE_HP * appear_waves / 2)
+		special_hp = 1;
 
-			if (enemy.origin_speed != 0) {
-				if (tower.attack_special == Slow) {
-					if (tower.level == 1)
-						enemy.speed = enemy.origin_speed * 0.8;
-					else if (tower.level == 2||tower.level == 3)
-						enemy.speed = enemy.origin_speed * 0.6;
-					if (tower.name_tag == Tower_Shit && enemy.time == 0) {
-						auto slowByShit = Sprite::create();
-						Vector<SpriteFrame*>shit;
-						shit.pushBack(SpriteFrame::create("/Tower/Shit/ID2_1.PNG", Rect(0, 0, 80, 21)));
-						shit.pushBack(SpriteFrame::create("/Tower/Shit/ID2_10.PNG", Rect(0, 0, 78, 18)));
-						slowByShit->runAction(RepeatForever::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(shit, 0.1)), nullptr)));
-						slowByShit->setPosition(Vec2(this->getContentSize().width / 2, 0));
-						slowByShit->setName("shit");
-						this->addChild(slowByShit);
-					}
-					enemy.time = 0;
-				}
-			}
-		}
-		else if (op == 1 && tower.name_tag == Tower_Star) {
-			Vec2 currentPosition = this->getPosition();
-			auto sprite = Sprite::create();
-			enemy.hp -= tower.attack * 0.3;
-			switch (tower.level) {
-				case 1:
-				case 2:
-					sprite->setTexture("/Tower/Star/ID3_73.PNG");
-					break;
-				case 3:
-					sprite->setTexture("/Tower/Star/ID3_85.PNG");
-					break;
-				default:
-					break;
-			}
-			sprite->runAction(Sequence::create(Blink::create(0.3 / (1 + if_speed_up), 1), FadeOut::create(0.1 / (1 + if_speed_up)), nullptr));
-			sprite->setPosition(Vec2(this->getContentSize().width / 2, this->getContentSize().height / 2));
-			this->addChild(sprite);
-		}
-		return true;
+	hpHolder->setScaleX(1 + special_hp);
+	hpSlider->setScaleX((1 + special_hp) * float(enemy.hp) / float(enemy.full_hp));
+	this->removeChildByTag(0);
+	this->removeChildByTag(1);
+	Vec2 currentPosition = this->getPosition();
+	hpSlider->setAnchorPoint(Vec2(0, 0.5));
+
+	hpHolder->setPosition(Vec2(this->getContentSize().width / 2, this->getContentSize().height + 10));
+	hpHolder->setTag(0);
+	hpSlider->setTag(1);
+	this->addChild(hpHolder, 1);
+	currentPosition = hpHolder->getAnchorPoint();
+	hpSlider->setPosition((Vec2(this->getContentSize().width / 2 - float(hpHolder->getContentSize().width) * 48 / 52 * 0.5 * (1 + special_hp), this->getContentSize().height + 10)));
+	this->addChild(hpSlider, 2);
+}
+
+//击杀动画
+void Enemy::death()
+{
+	this->unscheduleUpdate();
+	if (enemy.type == NORMAL) {
+		SoundManager::getInstance()->normal_dead_sound_effect();
 	}
-	return false;
+	else if (enemy.type == FLY) {
+		SoundManager::getInstance()->fly_dead_sound_effect();
+	}
+	else if (enemy.type == BOSS) {
+		SoundManager::getInstance()->boss_dead_sound_effect();
+	}
+	Vector<SpriteFrame*> death;
+	death.pushBack(SpriteFrame::create("/Enemy/monster/1.PNG", Rect(0, 0, 109, 99)));
+	death.pushBack(SpriteFrame::create("/Enemy/monster/2.PNG", Rect(0, 0, 111, 114)));
+	death.pushBack(SpriteFrame::create("/Enemy/monster/3.PNG", Rect(0, 0, 194, 197)));
+	death.pushBack(SpriteFrame::create("/Enemy/monster/4.PNG", Rect(0, 0, 256, 211)));
+	death.pushBack(SpriteFrame::create("/Enemy/monster/5.PNG", Rect(0, 0, 154, 163)));
+	death.pushBack(SpriteFrame::create("/Enemy/monster/6.PNG", Rect(0, 0, 275, 277)));
+	auto sprite = Sprite::create();
+	sprite->runAction(Repeat::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(death, 0.05 / (1 + if_speed_up))), FadeOut::create(0.2 / (1 + if_speed_up)), CallFunc::create([sprite]() {sprite->removeFromParent(); }), nullptr), 1));
+	sprite->setPosition(Vec2(this->getPositionX(), this->getPositionY()));
+	this->getParent()->addChild(sprite);
+	money_total += enemy.coin;//facade
+	game_money += enemy.coin;//facade
+	if (destination == this) {
+		destination = nullptr;
+	}
+
+	if (enemy.type <= 1) {
+		monster_total++;
+	}
+	else if (enemy.type == 2) {
+		boss_total++;
+	}
+	else {
+		barrier_total++;
+		if (enemy.type == 3 || enemy.type == 4) {
+			game_map[enemy.position.i][enemy.position.j] = 0;
+		}
+		else if (enemy.type == 5 || enemy.type == 6) {
+			game_map[enemy.position.i][enemy.position.j] = 0;
+			game_map[enemy.position.i][enemy.position.j + 1] = 0;
+		}
+		else if (enemy.type == 7 || enemy.type == 8) {
+			game_map[enemy.position.i][enemy.position.j] = 0;
+			game_map[enemy.position.i][enemy.position.j + 1] = 0;
+			game_map[enemy.position.i - 1][enemy.position.j] = 0;
+			game_map[enemy.position.i - 1][enemy.position.j + 1] = 0;
+		}
+	}
+	if (enemy.type <= 2) {
+		monster.erase(find_if(monster.begin(), monster.end(), [this](const Enemy* enemy) {return enemy == this; }));
+	}
+	else {
+		barrier.erase(find_if(barrier.begin(), barrier.end(), [this](const Enemy* enemy) {return enemy == this; }));
+	}
+	return;
 }
