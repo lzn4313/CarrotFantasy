@@ -67,41 +67,41 @@ public:
     CREATE_FUNC(BigLevelLayer);
 
 };
-////选天际小关界面
-//class Level_1_Layer :public cocos2d::Layer
-//{
-//private:
-//    Size visibleSize;
-//
-//    static const int totalPage = 4;
-//    std::string numImage[totalPage];
-//    float pagesPoint[totalPage];
-//    int currentPage;
-//
-//    void initSlideLayer();
-//    void initListener();
-//
-//    void nextPage();
-//    void lastPage();
-//    void rollBack();
-//public:
-//    //构造函数
-//    static cocos2d::Layer* createLayer();//继承创建场景
-//    virtual bool init();
-//    CREATE_FUNC(Level_1_Layer);
-//    //创建滑动层（供滑动翻页）
-//    void create_slide_layer();
-//    //返回选大关界面
-//    void return_to_biglevel(Ref* psender);
-//    //选择第1小关
-//    void level_1_1(Ref* psender, Widget::TouchEventType type);
-//    //选择第2小关
-//    void level_1_2(Ref* psender, Widget::TouchEventType type);
-//    //选择第3小关
-//    void level_1_3(Ref* psender, Widget::TouchEventType type);
-//    //选择第4小关
-//    void level_1_4(Ref* psender, Widget::TouchEventType type);
-//    //选择第5小关
-//    void level_1_5(Ref* psender, Widget::TouchEventType type);
-//};
+//选天际小关界面
+class Level_1_Layer :public cocos2d::Layer
+{
+private:
+    Size visibleSize;
+
+    static const int totalPage = 5;
+    std::string numImage[totalPage];
+    float pagesPoint[totalPage];
+    int currentPage;
+
+    Sprite* levels[totalPage];
+    Layer* slideLayer;
+    Layer* move_layer;
+    Layer* static_layer;
+
+
+    void initBackGround();
+    void initMenu();
+    void initSlideLayer();
+    void initListener();
+
+    void nextPage();
+    void lastPage();
+    void rollBack();
+public:
+    //构造函数
+    static cocos2d::Layer* createLayer();//继承创建场景
+    virtual bool init();
+    CREATE_FUNC(Level_1_Layer);
+    //创建滑动层（供滑动翻页）
+    void create_slide_layer();
+    //返回选大关界面
+    void return_to_biglevel(Ref* psender);
+    //选择第1小关
+    void gotoGameScene(Ref* psender,int level);
+};
 #endif // __GameSelection_SCENE_H__

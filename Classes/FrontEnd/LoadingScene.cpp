@@ -190,18 +190,27 @@ void LoadingScene::loadGameSelection() {
     cacheImage("GameSelectionScene/lock_btn_normal.png");
     cacheImage("GameSelectionScene/lock_btn_selected.png");
     cacheImage("GameSelectionScene/level_3_lock.png");
-    //cacheImage();
-    //cacheImage();
-    //cacheImage();
-    //cacheImage();
-    //cacheImage();
-    //cacheImage();
-    //cacheImage();
-    //cacheImage();
-    //cacheImage();
-    //cacheImage();
-    //cacheImage();
-    //cacheImage();
+    //加载小关选择
+    cacheImage("GameSelectionScene/BG_Left.PNG");
+    cacheImage("GameSelectionScene/BG_Right.PNG");
+    cacheImage("GameSelectionScene/stages_bg-hd_41.PNG");
+    cacheImage("GameSelectionScene/stages_bg-hd_40.PNG");
+    cacheImage("GameSelectionScene/stages_bg-hd_30.PNG");
+    cacheImage("GameSelectionScene/stages_bg-hd_28.PNG");
+    cacheImage("GameSelectionScene/stages_bg-hd_39.PNG");
+    cacheImage("GameSelectionScene/total_waves.png");
+    cacheImage("GameSelectionScene/Level_1.PNG");
+    cacheImage("GameSelectionScene/Level_2.PNG");
+    cacheImage("GameSelectionScene/Level_3.PNG");
+    cacheImage("GameSelectionScene/Level_4.PNG");
+    cacheImage("GameSelectionScene/Level_5.PNG");
+    cacheImage("GameSelectionScene/Tower_1.PNG");
+    cacheImage("GameSelectionScene/Tower_2.PNG");
+    cacheImage("GameSelectionScene/Tower_3.PNG");
+    cacheImage("GameSelectionScene/Tower_4.PNG");
+    cacheImage("GameSelectionScene/Tower_5.PNG");
+    cacheImage("GameSelectionScene/stages_bg-hd_31.PNG");
+    cacheImage("GameSelectionScene/lock_image.png");
 }
 void LoadingScene::check(float dt)
 {

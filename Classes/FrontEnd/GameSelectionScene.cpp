@@ -118,9 +118,9 @@ void BigLevelLayer::goto_evaluate()
 void BigLevelLayer::goto_level_1()
 {
     SoundManager::getInstance()->button_sound_effect();//播放音效
-    //auto level_1_layer = Level_1_Layer::createLayer();//创建层，并加入
-    //this->getParent()->addChild(level_1_layer, 1);
-    //this->removeFromParent();
+    auto level_1_layer = Level_1_Layer::createLayer();//创建层，并加入
+    this->getParent()->addChild(level_1_layer);
+    this->removeFromParentAndCleanup(true);
 }
 //去丛林
 void BigLevelLayer::goto_level_2()
@@ -416,626 +416,316 @@ void BigLevelLayer::rollBack() {
     slideLayer->runAction(MoveTo::create(0.1, Vec2(pagesPoint[currentPage], 0)));
 }
 /********************************  Level_1_Layer  *********************************/
-//cocos2d::Layer* Level_1_Layer::createLayer()
-//{
-//    return Level_1_Layer::create();
-//}
-////初始化
-//bool Level_1_Layer::init()
-//{
-//    if (!Layer::init()) {
-//        return false;
-//    }
-//    //获取屏幕大小
-//    auto visibleSize = Director::getInstance()->getVisibleSize();
-//    Vec2 origin = Director::getInstance()->getVisibleOrigin();
-//    /***********************  菜单  *************************/
-//    auto menu = Menu::create();
-//    menu->setPosition(Vec2::ZERO);
-//    this->addChild(menu);
-//    //返回选大关
-//    auto return_btn = MenuItemImage::create("GameSelectionScene/stages_bg-hd_41.PNG", "GameSelectionScene/stages_bg-hd_40.PNG",
-//        CC_CALLBACK_1(Level_1_Layer::return_to_biglevel, this));
-//    return_btn->setPosition(Vec2(visibleSize.width * 0.2,
-//        visibleSize.height * 0.95));
-//    menu->addChild(return_btn);
-//    /**********************  背景  **************************/
-//    auto bg_1 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/BG_Left.PNG");
-//    bg_1->setPosition(Vec2(bg_1->getContentSize().width / 2,
-//        bg_1->getContentSize().height / 2));
-//    this->addChild(bg_1);
-//
-//    auto bg_2 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/BG_Right.PNG");
-//    bg_2->setPosition(Vec2(+visibleSize.width - bg_2->getContentSize().width / 2,
-//        bg_2->getContentSize().height / 2));
-//    this->addChild(bg_2);
-//
-//    /***********************  滑动层  ***********************/
-//    create_slide_layer();
-//
-//    return true;
-//}
-////创建滑动层
-//void Level_1_Layer::create_slide_layer()
-//{
-//    //获取屏幕大小
-//    auto visibleSize = Director::getInstance()->getVisibleSize();
-//    Vec2 origin = Director::getInstance()->getVisibleOrigin();
-//    /**********************  滑动层设计  ***********************/
-//    //创建一个滑动层
-//    auto slide_layer = Layer::create();
-//    slide_layer->setName("SlideLayer");
-//    this->addChild(slide_layer);
-//
-//    //可动层  随触摸动画移动
-//    auto move_layer = Layer::create();
-//    move_layer->setName("MoveLayer");
-//    slide_layer->addChild(move_layer, 1);
-//    //不可动层  在触摸确定翻页后直接移动
-//    auto static_layer = Layer::create();
-//    static_layer->setName("StaticLayer");
-//    slide_layer->addChild(static_layer, 2);
-//    /*************************  关卡level_1_1  **************************************/
-//    //图  背景图需滑动，加入可动层
-//    auto level_1_1_image = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Level_1.PNG");
-//    level_1_1_image->setPosition(Vec2(visibleSize.width / 2,
-//        visibleSize.height *0.54));
-//    move_layer->addChild(level_1_1_image);
-//    //共几波  不需滑动，加入不可动层
-//    auto waves_1 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/total_waves.png");
-//    waves_1->setPosition(Vec2(visibleSize.width * 0.6,
-//        visibleSize.height * 0.83));
-//    static_layer->addChild(waves_1);
-//    auto waves_1_txt = Label::createWithTTF("15", "fonts/Marker Felt.ttf", 24);
-//    waves_1_txt->setTextColor(Color4B::YELLOW);
-//    waves_1_txt->setPosition(Vec2(visibleSize.width * 0.6,
-//        visibleSize.height * 0.83));
-//    static_layer->addChild(waves_1_txt);
-//    //炮台类型  不需滑动，加入不可动层
-//    //瓶子
-//    auto tower_1 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_1.PNG");
-//    tower_1->setPosition(Vec2(visibleSize.width / 2 - tower_1->getContentSize().width / 2,
-//        visibleSize.height * 0.23));
-//    static_layer->addChild(tower_1);
-//    //便便
-//    auto tower_2 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_2.PNG");
-//    tower_2->setPosition(Vec2(visibleSize.width / 2 + tower_2->getContentSize().width / 2,
-//        visibleSize.height * 0.23));
-//    static_layer->addChild(tower_2);
-//    //开始  不需移动，加入不可动层
-//    auto level_1_btn = Button::create("GameSelectionScene/stages_bg-hd_30.PNG", "GameSelectionScene/stages_bg-hd_28.PNG",
-//        "GameSelectionScene/stages_bg-hd_39.PNG");
-//    level_1_btn->addTouchEventListener(CC_CALLBACK_2(Level_1_Layer::level_1_1, this));
-//    level_1_btn->setPosition(Vec2(visibleSize.width / 2,
-//        visibleSize.height * 0.1));
-//    static_layer->addChild(level_1_btn);
-//
-//    /*************************  关卡level_1_2  **************************************/
-//    //图 可动层
-//    auto level_1_2_image = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Level_2.PNG");
-//    level_1_2_image->setPosition(Vec2(visibleSize.width * 1.5,
-//        visibleSize.height * 0.54));
-//    move_layer->addChild(level_1_2_image);
-//    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 2) {//若未解锁，则渲染“锁”提示
-//        auto level_1_2_lock = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/stages_bg-hd_31.PNG");
-//        level_1_2_lock->setPosition(Vec2(visibleSize.width * 1.64,
-//            visibleSize.height * 0.4));
-//        move_layer->addChild(level_1_2_lock);
-//    }
-//    //共几波 不可动层
-//    auto waves_2 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/total_waves.png");
-//    waves_2->setPosition(Vec2(visibleSize.width * 1.6,
-//        visibleSize.height * 0.83));
-//    static_layer->addChild(waves_2);
-//    auto waves_2_txt = Label::createWithTTF("15", "fonts/Marker Felt.ttf", 24);
-//    waves_2_txt->setTextColor(Color4B::YELLOW);
-//    waves_2_txt->setPosition(Vec2(visibleSize.width * 1.6,
-//        visibleSize.height * 0.83));
-//    static_layer->addChild(waves_2_txt);
-//    //炮台类型 不可动层
-//    //瓶子
-//    auto tower_2_1 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_1.PNG");
-//    tower_2_1->setPosition(Vec2(visibleSize.width * 1.5 - tower_2_1->getContentSize().width,
-//        visibleSize.height * 0.23));
-//    static_layer->addChild(tower_2_1);
-//    //便便
-//    auto tower_2_2 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_2.PNG");
-//    tower_2_2->setPosition(Vec2(visibleSize.width *1.5,
-//        visibleSize.height * 0.23));
-//    static_layer->addChild(tower_2_2);
-//    //星星
-//    auto tower_2_3 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_4.PNG");
-//    tower_2_3->setPosition(Vec2(visibleSize.width * 1.5 + tower_2_3->getContentSize().width,
-//        visibleSize.height * 0.23));
-//    static_layer->addChild(tower_2_3);
-//    //开始  不可动层
-//    auto level_2_btn = Button::create("GameSelectionScene/stages_bg-hd_30.PNG", "GameSelectionScene/stages_bg-hd_28.PNG",
-//        "GameSelectionScene/stages_bg-hd_39.PNG");
-//    level_2_btn->addTouchEventListener(CC_CALLBACK_2(Level_1_Layer::level_1_2, this));
-//    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 2) {//若未解锁，则设置按钮为不可用
-//        level_2_btn->setEnabled(false);
-//    }
-//    level_2_btn->setPosition(Vec2(visibleSize.width * 1.5,
-//        visibleSize.height * 0.1));
-//    static_layer->addChild(level_2_btn);
-//
-//    /*************************  关卡level_1_3  **************************************/
-//     //图 可动层
-//    auto level_1_3_image = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Level_3.PNG");
-//    level_1_3_image->setPosition(Vec2(visibleSize.width * 2.5,
-//        visibleSize.height * 0.54));
-//    move_layer->addChild(level_1_3_image);
-//    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 3) {//若未解锁，则渲染“锁”提示
-//        auto level_1_3_lock = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/stages_bg-hd_31.PNG");
-//        level_1_3_lock->setPosition(Vec2(visibleSize.width * 2.64,
-//            visibleSize.height * 0.4));
-//        move_layer->addChild(level_1_3_lock);
-//    }
-//    //共几波  不可动层
-//    auto waves_3 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/total_waves.png");
-//    waves_3->setPosition(Vec2(visibleSize.width * 2.6,
-//        visibleSize.height * 0.83));
-//    static_layer->addChild(waves_3);
-//    auto waves_3_txt = Label::createWithTTF("20", "fonts/Marker Felt.ttf", 24);
-//    waves_3_txt->setTextColor(Color4B::YELLOW);
-//    waves_3_txt->setPosition(Vec2(visibleSize.width * 2.6,
-//        visibleSize.height * 0.83));
-//    static_layer->addChild(waves_3_txt);
-//    //炮台类型  不可动层
-//    //瓶子
-//    auto tower_3_1 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_1.PNG");
-//    tower_3_1->setPosition(Vec2(visibleSize.width * 2.5 - tower_3_1->getContentSize().width,
-//        visibleSize.height * 0.23));
-//    static_layer->addChild(tower_3_1);
-//    //便便
-//    auto tower_3_2 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_2.PNG");
-//    tower_3_2->setPosition(Vec2(visibleSize.width * 2.5,
-//        visibleSize.height * 0.23));
-//    static_layer->addChild(tower_3_2);
-//    //风扇
-//    auto tower_3_3 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_3.PNG");
-//    tower_3_3->setPosition(Vec2(visibleSize.width * 2.5 + tower_3_3->getContentSize().width,
-//        visibleSize.height * 0.23));
-//    static_layer->addChild(tower_3_3);
-//    //开始 不可动层
-//    auto level_3_btn = Button::create("GameSelectionScene/stages_bg-hd_30.PNG", "GameSelectionScene/stages_bg-hd_28.PNG",
-//        "GameSelectionScene/stages_bg-hd_39.PNG");
-//    level_3_btn->addTouchEventListener(CC_CALLBACK_2(Level_1_Layer::level_1_3, this));
-//    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 3) {//若未解锁，则设置按钮为不可用
-//        level_3_btn->setEnabled(false);
-//    }
-//    level_3_btn->setPosition(Vec2(visibleSize.width * 2.5,
-//        visibleSize.height * 0.1));
-//    static_layer->addChild(level_3_btn);
-//
-//
-//    /*************************  关卡level_1_4  **************************************/
-//    //图
-//    auto level_1_4_image = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Level_4.PNG");
-//    level_1_4_image->setPosition(Vec2(visibleSize.width * 3.5,
-//        visibleSize.height * 0.54));
-//    move_layer->addChild(level_1_4_image);
-//    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 4) {//若未解锁，则渲染“锁”提示
-//        auto level_1_4_lock = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/stages_bg-hd_31.PNG");
-//        level_1_4_lock->setPosition(Vec2(visibleSize.width * 3.64,
-//            visibleSize.height * 0.4));
-//        move_layer->addChild(level_1_4_lock);
-//    }
-//    //共几波
-//    auto waves_4 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/total_waves.png");
-//    waves_4->setPosition(Vec2(visibleSize.width * 3.6,
-//        visibleSize.height * 0.83));
-//    static_layer->addChild(waves_4);
-//    auto waves_4_txt = Label::createWithTTF("20", "fonts/Marker Felt.ttf", 24);
-//    waves_4_txt->setTextColor(Color4B::YELLOW);
-//    waves_4_txt->setPosition(Vec2(visibleSize.width * 3.6,
-//        visibleSize.height * 0.83));
-//    static_layer->addChild(waves_4_txt);
-//    //炮台类型
-//    //便便
-//    auto tower_4_1 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_2.PNG");
-//    tower_4_1->setPosition(Vec2(visibleSize.width * 3.5 - tower_4_1->getContentSize().width/2,
-//        visibleSize.height * 0.23));
-//    static_layer->addChild(tower_4_1);
-//    //水晶塔
-//    auto tower_4_2 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_5.PNG");
-//    tower_4_2->setPosition(Vec2(visibleSize.width * 3.5 + tower_4_2->getContentSize().width / 2,
-//        visibleSize.height * 0.23));
-//    static_layer->addChild(tower_4_2);
-//    //开始
-//    auto level_4_btn = Button::create("GameSelectionScene/stages_bg-hd_30.PNG", "GameSelectionScene/stages_bg-hd_28.PNG",
-//        "GameSelectionScene/stages_bg-hd_39.PNG");
-//    level_4_btn->addTouchEventListener(CC_CALLBACK_2(Level_1_Layer::level_1_4, this));
-//    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 4) {
-//        level_4_btn->setEnabled(false);
-//    }
-//    level_4_btn->setPosition(Vec2(visibleSize.width * 3.5,
-//        visibleSize.height * 0.1));
-//    static_layer->addChild(level_4_btn);
-//
-//    /*************************  关卡level_1_5  **************************************/
-//    //图
-//    auto level_1_5_image = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Level_5.PNG");
-//    level_1_5_image->setPosition(Vec2(visibleSize.width * 4.5,
-//        visibleSize.height * 0.54));
-//    move_layer->addChild(level_1_5_image);
-//    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 5) {//若未解锁，则渲染“锁”提示
-//        auto level_1_5_lock = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/stages_bg-hd_31.PNG");
-//        level_1_5_lock->setPosition(Vec2(visibleSize.width * 4.64,
-//            visibleSize.height * 0.4));
-//        move_layer->addChild(level_1_5_lock);
-//    }
-//    //共几波
-//    auto waves_5 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/total_waves.png");
-//    waves_5->setPosition(Vec2(visibleSize.width * 4.6,
-//        visibleSize.height * 0.83));
-//    static_layer->addChild(waves_5);
-//    auto waves_5_txt = Label::createWithTTF("20", "fonts/Marker Felt.ttf", 24);
-//    waves_5_txt->setTextColor(Color4B::YELLOW);
-//    waves_5_txt->setPosition(Vec2(visibleSize.width * 4.6,
-//        visibleSize.height * 0.83));
-//    static_layer->addChild(waves_5_txt);
-//    //炮台类型
-//    //便便
-//    auto tower_5_1 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_2.PNG");
-//    tower_5_1->setPosition(Vec2(visibleSize.width * 4.5 - tower_5_1->getContentSize().width / 2,
-//        visibleSize.height * 0.23));
-//    static_layer->addChild(tower_5_1);
-//    //星星
-//    auto tower_5_2 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_4.PNG");
-//    tower_5_2->setPosition(Vec2(visibleSize.width * 4.5 + tower_5_2->getContentSize().width / 2,
-//        visibleSize.height * 0.23));
-//    static_layer->addChild(tower_5_2);
-//    //开始
-//    auto level_5_btn = Button::create("GameSelectionScene/stages_bg-hd_30.PNG", "GameSelectionScene/stages_bg-hd_28.PNG",
-//        "GameSelectionScene/stages_bg-hd_39.PNG");
-//    level_5_btn->addTouchEventListener(CC_CALLBACK_2(Level_1_Layer::level_1_5, this));
-//    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 5) {//若未解锁，则设置按钮为不可用
-//        level_5_btn->setEnabled(false);
-//    }
-//    level_5_btn->setPosition(Vec2(visibleSize.width * 4.5,
-//        visibleSize.height * 0.1));
-//    static_layer->addChild(level_5_btn);
-//
-//
-//
-//    /***********************  滑动实现  *****************************/
-//    auto listener4 = EventListenerTouchOneByOne::create();
-//    listener4->onTouchBegan = [move_layer](Touch* touch, Event* event) {
-//        return true;
-//    };
-//    listener4->onTouchMoved = [move_layer](Touch* touch, Event* event) {//实现触摸滑动
-//        float distance = touch->getLocation().x - touch->getPreviousLocation().x;
-//        move_layer->setPositionX(move_layer->getPositionX() + distance);
-//    };
-//    listener4->onTouchEnded = [=](Touch* touch, Event* event) {
-//        //获取触摸移动横向距离
-//        float distance = touch->getLocation().x - touch->getStartLocation().x;
-//        //记录每一页坐标
-//        float page[5] = { 0,-visibleSize.width,-2 * visibleSize.width ,-3 * visibleSize.width ,-4 * visibleSize.width };
-//        int n = find(page, 5, move_layer->getPosition().x);
-//
-//        if (distance > visibleSize.width / 6) {//若滑动大于六分之一屏幕，则视为滑动翻页
-//            if (move_layer->getPosition().x > page[0]) {
-//                move_layer->runAction(MoveTo::create(0.1, Vec2(page[0], 0)));
-//            }
-//            else if (move_layer->getPosition().x < page[0]) {
-//                move_layer->runAction(MoveTo::create(0.1, Vec2(page[n], 0)));
-//                static_layer->setPosition(Vec2(page[n], static_layer->getPositionY()));
-//                SoundManager::getInstance()->page_sound_effect();
-//            }
-//        }
-//        else if (distance < -visibleSize.width / 6) {
-//            if (move_layer->getPosition().x < page[4]) {
-//                move_layer->runAction(MoveTo::create(0.1, Vec2(page[4], 0)));
-//            }
-//            else if (move_layer->getPosition().x > page[4]) {
-//                move_layer->runAction(MoveTo::create(0.1, Vec2(page[n + 1], 0)));
-//                static_layer->setPosition(Vec2(page[n + 1], static_layer->getPositionY()));
-//                SoundManager::getInstance()->page_sound_effect();
-//            }
-//        }
-//        else {//若小于六分之一屏幕，则视为取消翻页或点击
-//            if (distance > 0) {//若取消翻页，则回到滑动前的页码
-//                move_layer->runAction(MoveTo::create(0.1, Vec2(page[n + 1], 0)));
-//                static_layer->setPosition(Vec2(page[n + 1], static_layer->getPositionY()));
-//            }
-//            else if (distance < 0) {
-//                move_layer->runAction(MoveTo::create(0.1, Vec2(page[n], 0)));
-//                static_layer->setPosition(Vec2(page[n], static_layer->getPositionY()));
-//            }
-//            else {//若点击，则根据鼠标位置，进行关卡选择
-//                Vec2 pos = move_layer->convertTouchToNodeSpace(touch);
-//                if (pos.x > level_1_1_image->getPositionX() - level_1_1_image->getContentSize().width / 2 &&
-//                    pos.x< level_1_1_image->getPositionX() + level_1_1_image->getContentSize().width / 2 &&
-//                    pos.y>level_1_1_image->getPositionY() - level_1_1_image->getContentSize().height / 2 &&
-//                    pos.y < level_1_1_image->getPositionY() + level_1_1_image->getContentSize().height / 2) {
-//                    level_1_1(slide_layer, Widget::TouchEventType::ENDED);
-//                }
-//                else if (pos.x > level_1_2_image->getPositionX() - level_1_2_image->getContentSize().width / 2 &&
-//                    pos.x< level_1_2_image->getPositionX() + level_1_2_image->getContentSize().width / 2 &&
-//                    pos.y>level_1_2_image->getPositionY() - level_1_2_image->getContentSize().height / 2 &&
-//                    pos.y < level_1_2_image->getPositionY() + level_1_2_image->getContentSize().height / 2) {
-//                    level_1_2(slide_layer, Widget::TouchEventType::ENDED);
-//                }
-//                else if
-//                    (pos.x > level_1_3_image->getPositionX() - level_1_3_image->getContentSize().width / 2 &&
-//                        pos.x< level_1_3_image->getPositionX() + level_1_3_image->getContentSize().width / 2 &&
-//                        pos.y>level_1_3_image->getPositionY() - level_1_3_image->getContentSize().height / 2 &&
-//                        pos.y < level_1_3_image->getPositionY() + level_1_3_image->getContentSize().height / 2) {
-//                    level_1_3(slide_layer, Widget::TouchEventType::ENDED);
-//                }
-//                else if
-//                    (pos.x > level_1_4_image->getPositionX() - level_1_4_image->getContentSize().width / 2 &&
-//                        pos.x< level_1_4_image->getPositionX() + level_1_4_image->getContentSize().width / 2 &&
-//                        pos.y>level_1_4_image->getPositionY() - level_1_4_image->getContentSize().height / 2 &&
-//                        pos.y < level_1_4_image->getPositionY() + level_1_4_image->getContentSize().height / 2)
-//                {
-//                    level_1_4(slide_layer, Widget::TouchEventType::ENDED);
-//                }
-//                else if (pos.x > level_1_5_image->getPositionX() - level_1_5_image->getContentSize().width / 2 &&
-//                    pos.x< level_1_5_image->getPositionX() + level_1_5_image->getContentSize().width / 2 &&
-//                    pos.y>level_1_5_image->getPositionY() - level_1_5_image->getContentSize().height / 2 &&
-//                    pos.y < level_1_5_image->getPositionY() + level_1_5_image->getContentSize().height / 2)
-//                {
-//                    level_1_5(slide_layer, Widget::TouchEventType::ENDED);
-//                }
-//            }
-//        }
-//    };
-//    //将事件监听器加入事件分发器
-//    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener4, move_layer);
-//}
-////回到选大关界面
-//void Level_1_Layer::return_to_biglevel(Ref* psender)
-//{
-//    SoundManager::getInstance()->button_sound_effect();//播放音效
-//    auto big_level_layer = BigLevelLayer::createLayer();//创建大关Layer
-//    this->getParent()->addChild(big_level_layer);//渲染
-//    this->removeFromParent();//移除当前Layer
-//}
-////天际第1关
-//void Level_1_Layer::level_1_1(Ref* psender, Widget::TouchEventType type)
-//{
-//    //按钮回调函数
-//    switch (type) {
-//        case Widget::TouchEventType::BEGAN:
-//            break;
-//        case Widget::TouchEventType::MOVED:
-//            break;
-//        case Widget::TouchEventType::CANCELED:
-//            break;
-//        case Widget::TouchEventType::ENDED://当且仅当抬起时触发
-//            SoundManager::getInstance()->button_sound_effect();//播放音效
-//            level_selection = 1;
-//            auto game_scene = GameScene::createScene();
-//            Director::getInstance()->replaceScene(game_scene);
-//            break;
-//    }
-//}
-////天际第2关
-//void Level_1_Layer::level_1_2(Ref* psender, Widget::TouchEventType type)
-//{
-//    switch (type) {
-//        case Widget::TouchEventType::BEGAN:
-//            break;
-//        case Widget::TouchEventType::MOVED:
-//            break;
-//        case Widget::TouchEventType::CANCELED:
-//            break;
-//        case Widget::TouchEventType::ENDED://当且仅当抬起时触发
-//            SoundManager::getInstance()->button_sound_effect();//播放音效
-//
-//            if (UserDefault::getInstance()->getIntegerForKey("level_1") < 2) {//若当前关未解锁，弹出提示
-//
-//                auto visibleSize = Director::getInstance()->getVisibleSize();
-//                Vec2 origin = Director::getInstance()->getVisibleOrigin();
-//                /*****************************  纯色层  ******************************************/
-//                auto black_layer = LayerColor::create(Color4B::BLACK);
-//                black_layer->setOpacity(85);
-//
-//                auto listener = EventListenerTouchOneByOne::create();
-//                listener->onTouchBegan = [black_layer](Touch* touch, Event* event) {
-//                    return true;
-//                };
-//                listener->setSwallowTouches(true);
-//                Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
-//                /********************************  背景  *****************************************/
-//                auto lock = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/lock_image.png");
-//                lock->setPosition(Vec2(visibleSize.width / 2,
-//                    visibleSize.height / 2));
-//                lock->setScale(1.4);
-//                black_layer->addChild(lock);
-//                /********************************  按钮  ****************************************/
-//                auto menu = Menu::create();
-//                menu->setPosition(Vec2::ZERO);
-//
-//                auto lock_btn = MenuItemImage::create("GameSelectionScene/lock_btn_normal.png", "GameSelectionScene/lock_btn_selected.png");
-//                lock_btn->setPosition(Vec2(visibleSize.width * 0.55,
-//                    visibleSize.height * 0.4));
-//                lock_btn->setCallback([this, black_layer](Ref* psender) {
-//                    SoundManager::getInstance()->button_sound_effect();
-//                    this->removeChild(black_layer);
-//                    });
-//                lock_btn->setScale(1.4);
-//                menu->addChild(lock_btn);
-//                black_layer->addChild(menu);
-//
-//                this->addChild(black_layer, 2);
-//            }
-//            else {
-//                level_selection = 2;
-//                auto game_scene = GameScene::createScene();
-//                Director::getInstance()->replaceScene(game_scene);
-//            }
-//            break;
-//    }
-//}
-////天际第3关
-//void Level_1_Layer::level_1_3(Ref* psender, Widget::TouchEventType type)
-//{
-//    switch (type) {
-//        case Widget::TouchEventType::BEGAN:
-//            break;
-//        case Widget::TouchEventType::MOVED:
-//            break;
-//        case Widget::TouchEventType::CANCELED:
-//            break;
-//        case Widget::TouchEventType::ENDED://当且仅当抬起时触发
-//            SoundManager::getInstance()->button_sound_effect();//播放音效
-//
-//            if (UserDefault::getInstance()->getIntegerForKey("level_1") < 3) {//若未解锁，弹出提示
-//
-//                auto visibleSize = Director::getInstance()->getVisibleSize();
-//                Vec2 origin = Director::getInstance()->getVisibleOrigin();
-//                /*****************************  纯色层  ******************************************/
-//                auto black_layer = LayerColor::create(Color4B::BLACK);
-//                black_layer->setOpacity(85);
-//
-//                auto listener = EventListenerTouchOneByOne::create();
-//                listener->onTouchBegan = [black_layer](Touch* touch, Event* event) {
-//                    return true;
-//                };
-//                listener->setSwallowTouches(true);
-//                Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
-//                /********************************  背景  *****************************************/
-//                auto lock = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/lock_image.png");
-//                lock->setPosition(Vec2(visibleSize.width / 2,
-//                    visibleSize.height / 2));
-//                lock->setScale(1.4);
-//                black_layer->addChild(lock);
-//                /********************************  按钮  ****************************************/
-//                auto menu = Menu::create();
-//                menu->setPosition(Vec2::ZERO);
-//
-//                auto lock_btn = MenuItemImage::create("GameSelectionScene/lock_btn_normal.png", "GameSelectionScene/lock_btn_selected.png");
-//                lock_btn->setPosition(Vec2(visibleSize.width * 0.55,
-//                    visibleSize.height * 0.4));
-//                lock_btn->setCallback([this, black_layer](Ref* psender) {
-//                    SoundManager::getInstance()->button_sound_effect();
-//                    this->removeChild(black_layer);
-//                    });
-//                lock_btn->setScale(1.4);
-//                menu->addChild(lock_btn);
-//                black_layer->addChild(menu);
-//
-//                this->addChild(black_layer, 2);
-//            }
-//            else {
-//                ;//level_1_3待开发
-//            }
-//            break;
-//    }
-//}
-////天际第4关
-//void Level_1_Layer::level_1_4(Ref* psender, Widget::TouchEventType type)
-//{
-//    switch (type) {
-//        case Widget::TouchEventType::BEGAN:
-//            break;
-//        case Widget::TouchEventType::MOVED:
-//            break;
-//        case Widget::TouchEventType::CANCELED:
-//            break;
-//        case Widget::TouchEventType::ENDED://当且仅当抬起时触发
-//            SoundManager::getInstance()->button_sound_effect();//播放音效
-//
-//            if (UserDefault::getInstance()->getIntegerForKey("level_1") < 4) {//若未解锁，弹出提示
-//
-//                auto visibleSize = Director::getInstance()->getVisibleSize();
-//                Vec2 origin = Director::getInstance()->getVisibleOrigin();
-//                /*****************************  纯色层  ******************************************/
-//                auto black_layer = LayerColor::create(Color4B::BLACK);
-//                black_layer->setOpacity(85);
-//
-//                auto listener = EventListenerTouchOneByOne::create();
-//                listener->onTouchBegan = [black_layer](Touch* touch, Event* event) {
-//                    return true;
-//                };
-//                listener->setSwallowTouches(true);
-//                Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
-//                /********************************  背景  *****************************************/
-//                auto lock = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/lock_image.png");
-//                lock->setPosition(Vec2(visibleSize.width / 2,
-//                    visibleSize.height / 2));
-//                lock->setScale(1.4);
-//                black_layer->addChild(lock);
-//                /********************************  按钮  ****************************************/
-//                auto menu = Menu::create();
-//                menu->setPosition(Vec2::ZERO);
-//
-//                auto lock_btn = MenuItemImage::create("GameSelectionScene/lock_btn_normal.png", "GameSelectionScene/lock_btn_selected.png");
-//                lock_btn->setPosition(Vec2(visibleSize.width * 0.55,
-//                    visibleSize.height * 0.4));
-//                lock_btn->setCallback([this, black_layer](Ref* psender) {
-//                    SoundManager::getInstance()->button_sound_effect();
-//                    this->removeChild(black_layer);
-//                    });
-//                lock_btn->setScale(1.4);
-//                menu->addChild(lock_btn);
-//                black_layer->addChild(menu);
-//
-//                this->addChild(black_layer, 2);
-//            }
-//            else {
-//                ;//level_1_4待开发
-//            }
-//            break;
-//    }
-//}
-////天际第5关
-//void Level_1_Layer::level_1_5(Ref* psender, Widget::TouchEventType type)
-//{
-//    switch (type) {
-//        case Widget::TouchEventType::BEGAN:
-//            break;
-//        case Widget::TouchEventType::MOVED:
-//            break;
-//        case Widget::TouchEventType::CANCELED:
-//            break;
-//        case Widget::TouchEventType::ENDED://当且仅当抬起时触发
-//            SoundManager::getInstance()->button_sound_effect();//播放音效
-//
-//            if (UserDefault::getInstance()->getIntegerForKey("level_1") < 5) {//若未解锁，弹出提示
-//
-//                auto visibleSize = Director::getInstance()->getVisibleSize();
-//                Vec2 origin = Director::getInstance()->getVisibleOrigin();
-//                /*****************************  纯色层  ******************************************/
-//                auto black_layer = LayerColor::create(Color4B::BLACK);
-//                black_layer->setOpacity(85);
-//
-//                auto listener = EventListenerTouchOneByOne::create();
-//                listener->onTouchBegan = [black_layer](Touch* touch, Event* event) {
-//                    return true;
-//                };
-//                listener->setSwallowTouches(true);
-//                Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
-//                /********************************  背景  *****************************************/
-//                auto lock = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/lock_image.png");
-//                lock->setPosition(Vec2(visibleSize.width / 2,
-//                    visibleSize.height / 2));
-//                lock->setScale(1.4);
-//                black_layer->addChild(lock);
-//                /********************************  按钮  ****************************************/
-//                auto menu = Menu::create();
-//                menu->setPosition(Vec2::ZERO);
-//
-//                auto lock_btn = MenuItemImage::create("GameSelectionScene/lock_btn_normal.png", "GameSelectionScene/lock_btn_selected.png");
-//                lock_btn->setPosition(Vec2(visibleSize.width * 0.55,
-//                    visibleSize.height * 0.4));
-//                lock_btn->setCallback([this, black_layer](Ref* psender) {
-//                    SoundManager::getInstance()->button_sound_effect();
-//                    this->removeChild(black_layer);
-//                    });
-//                lock_btn->setScale(1.4);
-//                menu->addChild(lock_btn);
-//                black_layer->addChild(menu);
-//
-//                this->addChild(black_layer, 2);
-//            }
-//            else {
-//                ;//level_1_5待开发
-//            }
-//            break;
-//    }
-//}
+cocos2d::Layer* Level_1_Layer::createLayer()
+{
+    return Level_1_Layer::create();
+}
+//初始化
+bool Level_1_Layer::init()
+{
+    if (!Layer::init()) {
+        return false;
+    }
+    //获取屏幕大小
+    visibleSize = Director::getInstance()->getVisibleSize();
+
+    for (int i = 0; i < totalPage; i++) {
+        pagesPoint[i] = -visibleSize.width * i;
+    }
+    currentPage = 0;
+
+
+    initBackGround();
+    initMenu();
+    initSlideLayer();
+    initListener();
+
+    return true;
+}
+//回到选大关界面
+void Level_1_Layer::return_to_biglevel(Ref* psender)
+{
+    SoundManager::getInstance()->button_sound_effect();//播放音效
+    this->getParent()->addChild(BigLevelLayer::create());
+    this->removeFromParent();//移除当前Layer
+}
+//天际第2关
+void Level_1_Layer::gotoGameScene(Ref*psender,int level)
+{
+    SoundManager::getInstance()->button_sound_effect();//播放音效
+    if (UserDefault::getInstance()->getIntegerForKey("level_1") < level) {//若当前关未解锁，弹出提示
+        /*****************************  纯色层  ******************************************/
+        auto black_layer = LayerColor::create(Color4B::BLACK);
+        black_layer->setOpacity(85);
+
+        auto listener = EventListenerTouchOneByOne::create();
+        listener->onTouchBegan = [black_layer](Touch* touch, Event* event) {
+            return true;
+            };
+        listener->setSwallowTouches(true);
+        Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
+        /********************************  背景  *****************************************/
+        auto lock = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/lock_image.png"));
+        lock->setPosition(Vec2(visibleSize.width / 2,visibleSize.height / 2));
+        lock->setScale(1.4);
+        black_layer->addChild(lock);
+        /********************************  按钮  ****************************************/
+        auto menu = Menu::create();
+        menu->setPosition(Vec2::ZERO);
+
+        auto lock_btn = MenuItemImage::create("GameSelectionScene/lock_btn_normal.png", "GameSelectionScene/lock_btn_selected.png");
+        lock_btn->setPosition(Vec2(visibleSize.width * 0.55,visibleSize.height * 0.4));
+        lock_btn->setCallback([this, black_layer](Ref* psender) {
+            SoundManager::getInstance()->button_sound_effect();
+            this->removeChild(black_layer);
+            });
+        lock_btn->setScale(1.4);
+        menu->addChild(lock_btn);
+        black_layer->addChild(menu);
+
+        this->addChild(black_layer, 2);
+    }
+    else {
+        CCLOG("enter game %d", level);
+        //level_selection = 2;
+        //auto game_scene = GameScene::createScene();
+        //Director::getInstance()->replaceScene(game_scene);
+    }
+}
+//初始化背景
+void Level_1_Layer::initBackGround() {
+    auto bg_1 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/BG_Left.PNG"));
+    bg_1->setPosition(Vec2(bg_1->getContentSize().width / 2,bg_1->getContentSize().height / 2));
+    this->addChild(bg_1);
+
+    auto bg_2 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/BG_Right.PNG"));
+    bg_2->setPosition(Vec2(+visibleSize.width - bg_2->getContentSize().width / 2,bg_2->getContentSize().height / 2));
+    this->addChild(bg_2);
+
+}
+//初始化菜单
+void Level_1_Layer::initMenu() {
+    auto menu = Menu::create();
+    menu->setPosition(Vec2::ZERO);
+    this->addChild(menu);
+    //返回选大关
+    auto return_btn = MenuItemImage::create("GameSelectionScene/stages_bg-hd_41.PNG", "GameSelectionScene/stages_bg-hd_40.PNG",CC_CALLBACK_1(Level_1_Layer::return_to_biglevel, this));
+    return_btn->setPosition(Vec2(visibleSize.width * 0.2,visibleSize.height * 0.95));
+    menu->addChild(return_btn);
+}
+//初始化滑动层
+void Level_1_Layer::initSlideLayer() {
+    /**********************  滑动层设计  ***********************/
+    //创建一个滑动层
+    slideLayer = Layer::create();
+    this->addChild(slideLayer);
+
+    //可动层  随触摸动画移动
+    move_layer = Layer::create();
+    slideLayer->addChild(move_layer);
+    //不可动层  在触摸确定翻页后直接移动
+    static_layer = Layer::create();
+    slideLayer->addChild(static_layer);
+
+    //开始
+    auto menu = Menu::create();
+    menu->setPosition(Vec2::ZERO);
+    this->addChild(menu);
+    auto level_btn = MenuItemImage::create("GameSelectionScene/stages_bg-hd_30.PNG", "GameSelectionScene/stages_bg-hd_28.PNG", "GameSelectionScene/stages_bg-hd_39.PNG", [this](Ref* psender) {gotoGameScene(this, currentPage + 1); });
+    level_btn->setPosition(Vec2(visibleSize.width / 2, visibleSize.height * 0.1));
+    menu->addChild(level_btn);
+
+    //共几波
+    auto waves = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/total_waves.png"));
+    waves->setPosition(Vec2(visibleSize.width * 0.6, visibleSize.height * 0.83));
+    this->addChild(waves);
+
+    /*************************  关卡level_1_1  **************************************/
+    //图  背景图需滑动，加入可动层
+    auto level_1_1_image = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Level_1.PNG"));
+    level_1_1_image->setPosition(Vec2(visibleSize.width / 2,visibleSize.height * 0.54));
+    move_layer->addChild(level_1_1_image);
+    levels[0] = level_1_1_image;
+
+    auto waves_1_txt = Label::createWithTTF("15", "fonts/Marker Felt.ttf", 24);
+    waves_1_txt->setTextColor(Color4B::YELLOW);
+    waves_1_txt->setPosition(Vec2(visibleSize.width * 0.6,visibleSize.height * 0.83));
+    static_layer->addChild(waves_1_txt);
+    //炮台类型  不需滑动，加入不可动层
+    //瓶子
+    auto tower_1 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_1.PNG"));
+    tower_1->setPosition(Vec2(visibleSize.width / 2 - tower_1->getContentSize().width / 2,visibleSize.height * 0.23));
+    static_layer->addChild(tower_1);
+    //便便
+    auto tower_2 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_2.PNG"));
+    tower_2->setPosition(Vec2(visibleSize.width / 2 + tower_2->getContentSize().width / 2,visibleSize.height * 0.23));
+    static_layer->addChild(tower_2);
+    /*************************  关卡level_1_2  **************************************/
+    //图 可动层
+    auto level_1_2_image = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Level_2.PNG"));
+    level_1_2_image->setPosition(Vec2(visibleSize.width * 1.5,visibleSize.height * 0.54));
+    move_layer->addChild(level_1_2_image);
+    levels[1] = level_1_2_image;
+    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 2) {//若未解锁，则渲染“锁”提示
+        auto level_1_2_lock = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/stages_bg-hd_31.PNG"));
+        level_1_2_lock->setPosition(Vec2(visibleSize.width * 1.64,visibleSize.height * 0.4));
+        move_layer->addChild(level_1_2_lock);
+    }
+    auto waves_2_txt = Label::createWithTTF("15", "fonts/Marker Felt.ttf", 24);
+    waves_2_txt->setTextColor(Color4B::YELLOW);
+    waves_2_txt->setPosition(Vec2(visibleSize.width * 1.6,visibleSize.height * 0.83));
+    static_layer->addChild(waves_2_txt);
+    //炮台类型 不可动层
+    //瓶子
+    auto tower_2_1 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_1.PNG"));
+    tower_2_1->setPosition(Vec2(visibleSize.width * 1.5 - tower_2_1->getContentSize().width,visibleSize.height * 0.23));
+    static_layer->addChild(tower_2_1);
+    //便便
+    auto tower_2_2 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_2.PNG"));
+    tower_2_2->setPosition(Vec2(visibleSize.width * 1.5,visibleSize.height * 0.23));
+    static_layer->addChild(tower_2_2);
+    //星星
+    auto tower_2_3 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_4.PNG"));
+    tower_2_3->setPosition(Vec2(visibleSize.width * 1.5 + tower_2_3->getContentSize().width,visibleSize.height * 0.23));
+    static_layer->addChild(tower_2_3);
+
+    /*************************  关卡level_1_3  **************************************/
+     //图 可动层
+    auto level_1_3_image = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Level_3.PNG"));
+    level_1_3_image->setPosition(Vec2(visibleSize.width * 2.5,visibleSize.height * 0.54));
+    move_layer->addChild(level_1_3_image);
+    levels[2] = level_1_3_image;
+    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 3) {//若未解锁，则渲染“锁”提示
+        auto level_1_3_lock = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/stages_bg-hd_31.PNG"));
+        level_1_3_lock->setPosition(Vec2(visibleSize.width * 2.64,visibleSize.height * 0.4));
+        move_layer->addChild(level_1_3_lock);
+    }
+    auto waves_3_txt = Label::createWithTTF("20", "fonts/Marker Felt.ttf", 24);
+    waves_3_txt->setTextColor(Color4B::YELLOW);
+    waves_3_txt->setPosition(Vec2(visibleSize.width * 2.6,visibleSize.height * 0.83));
+    static_layer->addChild(waves_3_txt);
+    //炮台类型  不可动层
+    //瓶子
+    auto tower_3_1 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_1.PNG"));
+    tower_3_1->setPosition(Vec2(visibleSize.width * 2.5 - tower_3_1->getContentSize().width,visibleSize.height * 0.23));
+    static_layer->addChild(tower_3_1);
+    //便便
+    auto tower_3_2 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_2.PNG"));
+    tower_3_2->setPosition(Vec2(visibleSize.width * 2.5,visibleSize.height * 0.23));
+    static_layer->addChild(tower_3_2);
+    //风扇
+    auto tower_3_3 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_3.PNG"));
+    tower_3_3->setPosition(Vec2(visibleSize.width * 2.5 + tower_3_3->getContentSize().width,visibleSize.height * 0.23));
+    static_layer->addChild(tower_3_3);
+
+    /*************************  关卡level_1_4  **************************************/
+    //图
+    auto level_1_4_image = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Level_4.PNG"));
+    level_1_4_image->setPosition(Vec2(visibleSize.width * 3.5,visibleSize.height * 0.54));
+    move_layer->addChild(level_1_4_image);
+    levels[3] = level_1_4_image;
+    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 4) {//若未解锁，则渲染“锁”提示
+        auto level_1_4_lock = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/stages_bg-hd_31.PNG"));
+        level_1_4_lock->setPosition(Vec2(visibleSize.width * 3.64,visibleSize.height * 0.4));
+        move_layer->addChild(level_1_4_lock);
+    }
+    auto waves_4_txt = Label::createWithTTF("20", "fonts/Marker Felt.ttf", 24);
+    waves_4_txt->setTextColor(Color4B::YELLOW);
+    waves_4_txt->setPosition(Vec2(visibleSize.width * 3.6,visibleSize.height * 0.83));
+    static_layer->addChild(waves_4_txt);
+    //炮台类型
+    //便便
+    auto tower_4_1 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_2.PNG"));
+    tower_4_1->setPosition(Vec2(visibleSize.width * 3.5 - tower_4_1->getContentSize().width / 2,visibleSize.height * 0.23));
+    static_layer->addChild(tower_4_1);
+    //水晶塔
+    auto tower_4_2 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_5.PNG"));
+    tower_4_2->setPosition(Vec2(visibleSize.width * 3.5 + tower_4_2->getContentSize().width / 2,visibleSize.height * 0.23));
+    static_layer->addChild(tower_4_2);
+    /*************************  关卡level_1_5  **************************************/
+    //图
+    auto level_1_5_image = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Level_5.PNG"));
+    level_1_5_image->setPosition(Vec2(visibleSize.width * 4.5,visibleSize.height * 0.54));
+    move_layer->addChild(level_1_5_image);
+    levels[4] = level_1_5_image;
+    if (UserDefault::getInstance()->getIntegerForKey("level_1") < 5) {//若未解锁，则渲染“锁”提示
+        auto level_1_5_lock = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/stages_bg-hd_31.PNG"));
+        level_1_5_lock->setPosition(Vec2(visibleSize.width * 4.64,visibleSize.height * 0.4));
+        move_layer->addChild(level_1_5_lock);
+    }
+    auto waves_5_txt = Label::createWithTTF("20", "fonts/Marker Felt.ttf", 24);
+    waves_5_txt->setTextColor(Color4B::YELLOW);
+    waves_5_txt->setPosition(Vec2(visibleSize.width * 4.6,visibleSize.height * 0.83));
+    static_layer->addChild(waves_5_txt);
+    //炮台类型
+    //便便
+    auto tower_5_1 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_2.PNG"));
+    tower_5_1->setPosition(Vec2(visibleSize.width * 4.5 - tower_5_1->getContentSize().width / 2,visibleSize.height * 0.23));
+    static_layer->addChild(tower_5_1);
+    //星星
+    auto tower_5_2 = Sprite::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey("GameSelectionScene/Tower_4.PNG"));
+    tower_5_2->setPosition(Vec2(visibleSize.width * 4.5 + tower_5_2->getContentSize().width / 2, visibleSize.height * 0.23));
+    static_layer->addChild(tower_5_2);
+}
+//初始化监听器
+void Level_1_Layer::initListener() {
+    /***********************  滑动实现  *****************************/
+    auto listener4 = EventListenerTouchOneByOne::create();
+    listener4->onTouchBegan = [this](Touch* touch, Event* event) {
+        return true;
+        };
+    listener4->onTouchMoved = [this](Touch* touch, Event* event) {//实现触摸滑动
+        float distance = touch->getLocation().x - touch->getPreviousLocation().x;
+        move_layer->setPositionX(move_layer->getPositionX() + distance);
+        };
+    listener4->onTouchEnded = [this](Touch* touch, Event* event) {
+        //获取触摸移动横向距离
+        float distance = touch->getLocation().x - touch->getStartLocation().x;
+        if (distance > visibleSize.width / 6) {//若滑动大于六分之一屏幕，则视为滑动翻页
+            lastPage();
+        }
+        else if (distance < -visibleSize.width / 6) {
+            nextPage();
+        }
+        else {//若小于六分之一屏幕，则视为取消翻页或点击
+            if (distance) {//若取消翻页，则回到滑动前的页码
+                rollBack();
+                return;
+            }
+            Vec2 pos = move_layer->convertTouchToNodeSpace(touch);
+            for (int i = 0; i < totalPage; i++) {
+                if (pos.x > levels[i]->getPositionX() - levels[i]->getContentSize().width / 2 &&
+                    pos.x< levels[i]->getPositionX() + levels[i]->getContentSize().width / 2 &&
+                    pos.y>levels[i]->getPositionY() - levels[i]->getContentSize().height / 2 &&
+                    pos.y < levels[i]->getPositionY() + levels[i]->getContentSize().height / 2) {
+                    gotoGameScene(slideLayer, currentPage+1);
+                }
+            }
+        }
+        };
+    //将事件监听器加入事件分发器
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener4, move_layer);
+}
+void Level_1_Layer::lastPage() {
+    if (currentPage==0) {
+        rollBack();
+        return;
+    }
+    SoundManager::getInstance()->page_sound_effect();
+    currentPage--;
+    move_layer->runAction(MoveTo::create(0.1, Vec2(pagesPoint[currentPage], 0)));
+    static_layer->setPosition(Vec2(pagesPoint[currentPage], static_layer->getPositionY()));
+}
+void Level_1_Layer::nextPage() {
+    if (currentPage == totalPage - 1) {
+        rollBack();
+        return;
+    }
+    SoundManager::getInstance()->page_sound_effect();
+    currentPage++;
+    move_layer->runAction(MoveTo::create(0.1, Vec2(pagesPoint[currentPage], 0)));
+    static_layer->setPosition(Vec2(pagesPoint[currentPage], static_layer->getPositionY()));
+}
+void Level_1_Layer::rollBack() {
+    move_layer->runAction(MoveTo::create(0.1, Vec2(pagesPoint[currentPage], 0)));
+}
