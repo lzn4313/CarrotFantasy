@@ -39,6 +39,11 @@ bool LevelLayer::init(int level)
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     /***********************  部分全局变量初始化  *******************/
+    for (int i = 0; i < 7; i++) {
+        for (int j = 0; j < 12; j++) {
+            game_map[i][j] = 0;
+        }
+    }
     //更新金钱显示
     game_money = 450;
     //更新波数显示
