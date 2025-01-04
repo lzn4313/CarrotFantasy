@@ -15,6 +15,8 @@ extern int carrot_level;//记录萝卜等级
 extern pos carrot_position;//记录萝卜位置
 extern vector<Enemy*> monster;//储存怪物
 
+const string str[TOWER_NUM + 1] = { "/Tower/Bottle/", "/Tower/Shit/", "/Tower/Fan/", "/Tower/Star/", "/Tower/Build/" };
+
 /*
 Sprite* Bullet::createSprite()
 {
@@ -56,12 +58,117 @@ void Bullet::update(float dt)
 			}
 		}
 	}
-}*/
+}
 
 Sprite* Tower_body::createSprite()
 {
 	return Tower_body::create();
-}
+}*/
+
+
+
+class TowerFactory {
+public:
+	virtual Tower* createTower() = 0;
+};
+
+class BottleFactory : public TowerFactory {
+public:
+	Tower* createTower() override {
+		Tower* tower = nullptr;
+		tower = new TowerBottle();
+		tower->build();
+		return tower;
+	}
+};
+
+class ShitFactory : public TowerFactory {
+public:
+	Tower* createTower() override {
+		Tower* tower = nullptr;
+		tower = new TowerShit();
+		tower->build();
+		return tower;
+	}
+};
+
+class FanFactory : public TowerFactory {
+public:
+	Tower* createTower() override {
+		Tower* tower = nullptr;
+		tower = new TowerFan();
+		tower->build();
+		return tower;
+	}
+};
+
+class StarFactory : public TowerFactory {
+public:
+	Tower* createTower() override {
+		Tower* tower = nullptr;
+		tower = new TowerStar();
+		tower->build();
+		return tower;
+	}
+};
+
+class TowerBottle : public Tower {
+public:
+	void build() override {
+		int tag = Tower_Bottle;
+
+		TowerBase = Sprite::create();
+		Tower_information tower_information = Tower_information{ tag, Tower_Value[tag - 1], Tower_Attack[tag - 1], Tower_Attack_Speed[tag - 1], 1.2, tag - 1, 1 };
+		TowerBody = new Tower_body(tower_information);
+
+		TowerBase->setTexture(str[tag - 1] + "base_1.PNG");
+		TowerBody->setTexture(str[tag - 1] + "origin1.PNG");
+		TowerBody->setRotation(-90);
+	}
+};
+
+class TowerShit : public Tower {
+public:
+	void build() override {
+		int tag = Tower_Shit;
+
+		TowerBase = Sprite::create();
+		Tower_information tower_information = Tower_information{ tag, Tower_Value[tag - 1], Tower_Attack[tag - 1], Tower_Attack_Speed[tag - 1], 1.2, tag - 1, 1 };
+		TowerBody = new Tower_body(tower_information);
+
+		TowerBase->setTexture(str[tag - 1] + "base_1.PNG");
+		TowerBody->setTexture(str[tag - 1] + "origin1.PNG");
+	}
+};
+
+class TowerFan : public Tower {
+public:
+	void build() override {
+		int tag = Tower_Fan;
+
+		TowerBase = Sprite::create();
+		Tower_information tower_information = Tower_information{ tag, Tower_Value[tag - 1], Tower_Attack[tag - 1], Tower_Attack_Speed[tag - 1], 1.2, tag - 1, 1 };
+		TowerBody = new Tower_body(tower_information);
+
+		TowerBase->setTexture(str[tag - 1] + "base_1.PNG");
+		TowerBody->setTexture(str[tag - 1] + "origin1.PNG");
+	}
+};
+
+class TowerStar : public Tower {
+public:
+	void build() override {
+		int tag = Tower_Star;
+
+		TowerBase = Sprite::create();
+		Tower_information tower_information = Tower_information{ tag, Tower_Value[tag - 1], Tower_Attack[tag - 1], Tower_Attack_Speed[tag - 1], 1.2, tag - 1, 1 };
+		TowerBody = new Tower_body(tower_information);
+
+		TowerBase->setTexture(str[tag - 1] + "base_1.PNG");
+		TowerBody->setTexture(str[tag - 1] + "origin1.PNG");
+		TowerBody->setRotation(0);
+	}
+};
 
 bool Tower_body::init()
 {
@@ -84,7 +191,7 @@ void Tower_body::update(float dt)
 		if (destination != nullptr)
 			enemy_position = destination->getPosition();
 
-		if (destination!=nullptr&&((my_position.x - enemy_position.x) * (my_position.x - enemy_position.x) +
+		if (destination != nullptr && ((my_position.x - enemy_position.x) * (my_position.x - enemy_position.x) +
 			(my_position.y - enemy_position.y) * (my_position.y - enemy_position.y))
 			<= ((tower_information.attack_range * 80 * 1.414) * (tower_information.attack_range * 80 * 1.414) +
 				(destination->getContentSize().width / 2) * (destination->getContentSize().width / 2) +
@@ -304,146 +411,42 @@ void Tower_body::update(float dt)
 	}
 }
 
-/*建造炮台*/
-void Tower::build_tower(pos position, int tag, cocos2d::Layer* this_layer)
-{
-	if (tag <= 4) {
-		SoundManager::getInstance()->build_sound_effect();
-
-		string str[5] = { "/Tower/Bottle/" ,"/Tower/Shit/", "/Tower/Fan/","/Tower/Star/" ,"/Tower/Build/" };
-		vec2 vec = trans_ij_to_xy(position);
-
-		TowerBase = Sprite::create();
-		TowerBody = Tower_body::create();
-		TowerBody->tower_information = { tag, Tower_Value[tag - 1], Tower_Attack[tag - 1], Tower_Attack_Speed[tag - 1], 1.2, tag - 1, 1 };
-
-		switch (tag) {
-			case 1:
-				TowerBase->setTexture(str[tag - 1] + "ID1_11.PNG");
-				TowerBody->setTexture(str[tag - 1] + "origin1.PNG");
-				TowerBody->setRotation(-90);
-				break;
-			case 2:
-				TowerBase->setTexture(str[tag - 1] + "ID2_29.PNG");
-				TowerBody->setTexture(str[tag - 1] + "origin1.PNG");
-				break;
-			case 3:
-				TowerBase->setTexture(str[tag - 1] + "ID4_0.PNG");
-				TowerBody->setTexture(str[tag - 1] + "origin1.PNG");
-				break;
-			case 4:
-				TowerBase->setTexture(str[tag - 1] + "ID3_56.PNG");
-				TowerBody->setTexture(str[tag - 1] + "origin1.PNG");
-				TowerBody->setRotation(0);
-				break;
-			default:
-				break;
-		}
-
-		TowerBase->setPosition(vec.x, vec.y);
-		this_layer->addChild(TowerBase);
-		TowerBody->setPosition(vec.x, vec.y);
-		this_layer->addChild(TowerBody);
-		tower_map[position.i][position.j] = this;
-
-		//利用帧动画完成建造特效
-		auto Effect = Sprite::create();
-		Vector<SpriteFrame*> frame;
-		frame.pushBack(SpriteFrame::create(str[4] + "Items02-hd_1.PNG", Rect(0, 0, 161, 133)));
-		frame.pushBack(SpriteFrame::create(str[4] + "Items02-hd_2.PNG", Rect(0, 0, 169, 175)));
-		frame.pushBack(SpriteFrame::create(str[4] + "Items02-hd_3.PNG", Rect(0, 0, 199, 224)));
-		frame.pushBack(SpriteFrame::create(str[4] + "Items02-hd_4.PNG", Rect(0, 0, 242, 243)));
-		auto remove_effect = CallFunc::create([=]() {
-			this_layer->removeChild(Effect);
-			});
-		Effect->runAction(Sequence::create(Animate::create(Animation::createWithSpriteFrames(frame, 0.05)), remove_effect, nullptr));
-		Effect->setPosition(vec.x, vec.y);
-		this_layer->addChild(Effect);
-	}
-}
-
 /*升级炮台*/
-void Tower::up_level_tower(pos position, cocos2d::Layer* this_layer)
+void Tower::up_level_tower()
 {
-	vec2 vec = trans_ij_to_xy(position);
-	SoundManager::getInstance()->uplevel_sound_effect();
-
-	if (game_map[position.i][position.j] != CARROT) {
+	if (TowerBody->getInfo().name_tag <= TOWER_NUM && TowerBody->getInfo().name_tag >= 1) {
 		if (this->get_level() < Max_Level) {
-			string str[4] = { "/Tower/Bottle/" ,"/Tower/Shit/", "/Tower/Fan/","/Tower/Star/" };
-
 			/*更新基本信息*/
-			TowerBody->tower_information.value += get_level_up_money();
-			TowerBody->tower_information.level++;
-			TowerBody->tower_information.attack *= 2;
-			TowerBody->tower_information.attack_range += 0.5;
-			if (TowerBody->tower_information.name_tag == Tower_Bottle)
-				TowerBody->tower_information.attack_speed += 2;
+			Tower_information newInfo = TowerBody->getInfo();
+			newInfo.value += get_level_up_money();
+			newInfo.level++;
+			newInfo.attack *= 2;
+			newInfo.attack_range += 0.5;
+			if (newInfo.name_tag == Tower_Bottle)
+				newInfo.attack_speed += 2;
 			else
-				TowerBody->tower_information.attack_speed *= 1.5;
+				newInfo.attack_speed *= 1.5;
+			TowerBody->setInfo(newInfo);
 
-			//TowerBody->tower_information = tower_map[position.i][position.j];
-
-			/*更新画面*/
-			switch (TowerBody->tower_information.name_tag) {
-				case 1:
-					TowerBase->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID1_11.PNG");
-					if (TowerBody->tower_information.level == 2) {
-						TowerBody->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID1_15.PNG");
-					}
-					else if (TowerBody->tower_information.level == 3) {
-						TowerBody->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID1_5.PNG");
-					}
-					TowerBody->setRotation(-90);
-					break;
-				case 2:
-					if (TowerBody->tower_information.level == 2) {
-						TowerBase->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID2_9.PNG");
-						TowerBody->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID2_21.PNG");
-					}
-					else if (TowerBody->tower_information.level == 3) {
-						TowerBase->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID2_7.PNG");
-						TowerBody->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID2_22.PNG");
-					}
-					break;
-				case 3:
-					if (TowerBody->tower_information.level == 2) {
-						TowerBase->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID4_1.PNG");
-						TowerBody->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID4_8.PNG");
-					}
-					else if (TowerBody->tower_information.level == 3) {
-						TowerBase->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID4_2.PNG");
-						TowerBody->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID4_11.PNG");
-					}
-					break;
-				case 4:
-					if (TowerBody->tower_information.level == 2) {
-						TowerBase->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID3_56.PNG");
-						TowerBody->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID3_98.PNG");
-					}
-					else if (TowerBody->tower_information.level == 3) {
-						TowerBase->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID3_84.PNG");
-						TowerBody->setTexture(str[TowerBody->tower_information.name_tag - 1] + "ID3_46.PNG");
-					}
-					TowerBody->setRotation(0);
-					break;
-				default:
-					break;
+			int level = TowerBody->getInfo().level;
+			/*更新图片*/
+			if (level == 2) {
+				TowerBase->setTexture(str[TowerBody->getInfo().name_tag - 1] + "base_2.PNG");
+				TowerBody->setTexture(str[TowerBody->getInfo().name_tag - 1] + "origin_2.PNG");
+			}
+			else if (level == 3) {
+				TowerBase->setTexture(str[TowerBody->getInfo().name_tag - 1] + "base_3.PNG");
+				TowerBody->setTexture(str[TowerBody->getInfo().name_tag - 1] + "origin_3.PNG");
 			}
 
-			TowerBase->setPosition(vec.x, vec.y);
-			TowerBody->setPosition(vec.x, vec.y);
-
-			//this_layer->addChild(TowerBase);
-			//this_layer->addChild(TowerBody);
+			if (TowerBody->getInfo().name_tag == Tower_Bottle)
+				TowerBody->setRotation(-90);
+			else if (TowerBody->getInfo().name_tag == Tower_Star)
+				TowerBody->setRotation(0);
 		}
-		
 	}
-	else if (carrot_level < Max_Level) {
-		carrot_level++;
-		carrot_hp += 2;
-	}
-	//利用帧动画完成升级特效
+
+	/*/利用帧动画完成升级特效
 	auto Effect_1 = Sprite::create();
 	Vector<SpriteFrame*> frame;
 	frame.pushBack(SpriteFrame::create("/Tower/Build/up1.png", Rect(0, 0, 77, 62)));
@@ -467,22 +470,17 @@ void Tower::up_level_tower(pos position, cocos2d::Layer* this_layer)
 		this_layer->removeChild(Effect_2);
 		});
 	Effect_2->runAction(Sequence::create(effect_move, remove_effect_2, nullptr));
-	this_layer->addChild(Effect_2);
+	this_layer->addChild(Effect_2);*/
 
 }
 
 /*出售炮台*/
-void Tower::sell_tower(pos position, cocos2d::Layer* this_layer)
+int Tower::sell_tower()
 {
-	SoundManager::getInstance()->sell_sound_effect();
+	int money = this->get_sell_money();
+	this->removeFromParent();
 
-	this_layer->removeChild(TowerBase);
-	this_layer->removeChild(TowerBody);
-	//delete TowerBody;
-	//TowerBody->removeFromParent();
-
-	tower_map[position.i][position.j] = nullptr;
-
+	/*
 	//利用帧动画完成删除特效
 	vec2 vec = trans_ij_to_xy(position);
 	auto Effect = Sprite::create();
@@ -497,15 +495,17 @@ void Tower::sell_tower(pos position, cocos2d::Layer* this_layer)
 		this_layer->removeChild(Effect);
 		});
 	Effect->runAction(Sequence::create(Animate::create(Animation::createWithSpriteFrames(frame, 0.05)), remove_effect, nullptr));
+	*/
 
 	delete this;
+	return money;
 }
 
 /*获得出售价格*/
 int Tower::get_sell_money() 
 {
 	if (this != nullptr && TowerBody != nullptr)
-		return TowerBody->tower_information.value * 0.8;
+		return TowerBody->getInfo().value * 0.8;
 	else
 		return 0;
 }
@@ -514,7 +514,7 @@ int Tower::get_sell_money()
 float Tower::get_attack_range()
 {
 	if (this != nullptr && TowerBody != nullptr)
-		return TowerBody->tower_information.attack_range;
+		return TowerBody->getInfo().attack_range;
 	else
 		return 1;
 }
@@ -523,7 +523,7 @@ float Tower::get_attack_range()
 int Tower::get_level()
 {
 	if (this != nullptr && TowerBody != nullptr)
-		return TowerBody->tower_information.level;
+		return TowerBody->getInfo().level;
 	else
 		return 0;
 }
@@ -532,10 +532,10 @@ int Tower::get_level()
 int Tower::get_level_up_money()
 {
 	if (this != nullptr && TowerBody != nullptr) {
-		if (TowerBody->tower_information.name_tag == Tower_Bottle)
-			return (100 + TowerBody->tower_information.level * 80);
+		if (TowerBody->getInfo().name_tag == Tower_Bottle)
+			return (100 + TowerBody->getInfo().level * 80);
 		else
-			return (TowerBody->tower_information.level == 1 ? 220 : 260);
+			return (TowerBody->getInfo().level == 1 ? 220 : 260);
 	}
 	else
 		return (carrot_level == 1 ? 500 : 1000);
@@ -544,4 +544,47 @@ int Tower::get_level_up_money()
 /*获得初始建造金币*/
 int getMoney(int tag) {
 	return Tower_Value[tag - 1];
+}
+
+/*建造炮台*/
+Tower* build_tower(int tag)
+{
+	Tower* tower = nullptr;
+	TowerFactory* factory = nullptr;
+	if (tag <= TOWER_NUM && tag >=1) {
+		// 使用工厂类创建相应的炮塔
+		switch (tag)
+		{
+			case Tower_Bottle:
+				factory = new BottleFactory();
+			case Tower_Shit:
+				factory = new ShitFactory();
+			case Tower_Fan:
+				factory = new FanFactory();
+			case Tower_Star:
+				factory = new StarFactory();
+			default:
+				break;
+		}
+		if (factory != nullptr) {
+			tower = factory->createTower();
+		}
+	}
+
+	/*
+	//利用帧动画完成建造特效
+	auto Effect = Sprite::create();
+	Vector<SpriteFrame*> frame;
+	frame.pushBack(SpriteFrame::create(str[4] + "Items02-hd_1.PNG", Rect(0, 0, 161, 133)));
+	frame.pushBack(SpriteFrame::create(str[4] + "Items02-hd_2.PNG", Rect(0, 0, 169, 175)));
+	frame.pushBack(SpriteFrame::create(str[4] + "Items02-hd_3.PNG", Rect(0, 0, 199, 224)));
+	frame.pushBack(SpriteFrame::create(str[4] + "Items02-hd_4.PNG", Rect(0, 0, 242, 243)));
+	auto remove_effect = CallFunc::create([=]() {
+		this_layer->removeChild(Effect);
+		});
+	Effect->runAction(Sequence::create(Animate::create(Animation::createWithSpriteFrames(frame, 0.05)), remove_effect, nullptr));
+	Effect->setPosition(vec.x, vec.y);
+	this_layer->addChild(Effect);*/
+
+	return tower;
 }
