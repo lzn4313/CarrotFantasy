@@ -6,6 +6,7 @@
 #include "Config/sound&music.h"
 #include "Config/GameData.h"
 USING_NS_CC;
+extern int level_selection;
 /*******************************  GameSelectionScene  ******************************/
 Scene*  GameSelectionScene::createScene()
 {
@@ -487,9 +488,8 @@ void Level_1_Layer::gotoGameScene(Ref*psender,int level)
     }
     else {
         CCLOG("enter game %d", level);
-        //level_selection = 2;
-        //auto game_scene = GameScene::createScene();
-        //Director::getInstance()->replaceScene(game_scene);
+        level_selection = level;
+        Director::getInstance()->replaceScene(GameScene::createScene());
     }
 }
 //≥ı ºªØ±≥æ∞
