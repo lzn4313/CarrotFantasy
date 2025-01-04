@@ -69,10 +69,7 @@ void  MenuScene::goto_boss(Ref* psender) {
         listener->setSwallowTouches(true);
         Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
         /********************************  背景  *****************************************/
-        auto boss_lock_image = Sprite::create("/MenuScene/boss_lock_image.png");//boss模式未解锁的图片提示
-        if (boss_lock_image == nullptr) {
-            problemLoading("'boss_lock_image.png'");
-        }
+        auto boss_lock_image = Sprite::create("MenuScene/boss_lock_image.png");//boss模式未解锁的图片提示
         boss_lock_image->setPosition(Vec2(visibleSize.width / 2,
             visibleSize.height / 2));
         boss_lock_image->setScale(1.4);
@@ -81,10 +78,7 @@ void  MenuScene::goto_boss(Ref* psender) {
         auto menu = Menu::create();
         menu->setPosition(Vec2::ZERO);
 
-        auto lock_btn = MenuItemImage::create("/MenuScene/lock_btn_normal.png", "/MenuScene/lock_btn_selected.png");//确定按钮
-        if (lock_btn == nullptr) {
-            problemLoading("lock_btn_normal.png||lock_btn_selected.png");
-        }
+        auto lock_btn = MenuItemImage::create("MenuScene/lock_btn_normal.png", "MenuScene/lock_btn_selected.png");//确定按钮
         lock_btn->setPosition(Vec2(visibleSize.width *0.55,
             visibleSize.height * 0.4));
         lock_btn->setCallback([this,black_layer](Ref* psender) {//回调函数，返回上MenuScene
@@ -117,24 +111,16 @@ void  MenuScene::goto_nest(Ref* psender) {
         listener->setSwallowTouches(true);
         Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, black_layer);
         /********************************  背景  *****************************************/
-        auto nest_lock_image = Sprite::create("/MenuScene/nest_lock_image.png");//怪物窝未解锁图片提示
-        if (nest_lock_image == nullptr) {
-            problemLoading("'nest_lock_image.png'");
-        }
-        nest_lock_image->setPosition(Vec2(visibleSize.width / 2,
-            visibleSize.height / 2));
+        auto nest_lock_image = Sprite::create("MenuScene/nest_lock_image.png");//怪物窝未解锁图片提示
+        nest_lock_image->setPosition(Vec2(visibleSize.width / 2,visibleSize.height / 2));
         nest_lock_image->setScale(1.4);
         black_layer->addChild(nest_lock_image);
         /********************************  按钮  ****************************************/
         auto menu = Menu::create();
         menu->setPosition(Vec2::ZERO);
 
-        auto lock_btn = MenuItemImage::create("/MenuScene/lock_btn_normal.png", "/MenuScene/lock_btn_selected.png");//确定按钮
-        if (lock_btn == nullptr) {
-            problemLoading("lock_btn_normal.png||lock_btn_selected.png");
-        }
-        lock_btn->setPosition(Vec2(visibleSize.width * 0.55,
-            visibleSize.height * 0.4));
+        auto lock_btn = MenuItemImage::create("MenuScene/lock_btn_normal.png", "MenuScene/lock_btn_selected.png");//确定按钮
+        lock_btn->setPosition(Vec2(visibleSize.width * 0.55,visibleSize.height * 0.4));
         lock_btn->setCallback([this, black_layer](Ref* psender) {
             SoundManager::getInstance()->button_sound_effect();
             this->removeChild(black_layer);

@@ -35,6 +35,7 @@ void LoadingScene::loadSource() {
     loadMenu();
     loadOptions();
     loadHelper();
+    loadGameSelection();
 
     numberOfLoadedRes = 1;
 }
@@ -167,39 +168,40 @@ void LoadingScene::loadGameSelection() {
     //加载菜单
     cacheImage("GameSelectionScene/stages_bg-hd_42.PNG");
     cacheImage("GameSelectionScene/stages_bg-hd_33.PNG");
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
-    cacheImage();
+    //加载大关选择
+    cacheImage("GameSelectionScene/page_no.png");
+    cacheImage("GameSelectionScene/page_yes.png");
+    cacheImage("GameSelectionScene/themescene1-hd_8.PNG");
+    cacheImage("GameSelectionScene/themescene1-hd_17.PNG");
+    cacheImage("GameSelectionScene/themescene1-hd_32.PNG");
+    cacheImage("GameSelectionScene/themescene1-hd_31.PNG");
+    cacheImage("GameSelectionScene/themescene1-hd_26.PNG");
+    cacheImage("GameSelectionScene/themescene1-hd_25.PNG");
+    cacheImage("GameSelectionScene/themescene1-hd.png");
+    cacheImage("GameSelectionScene/themescene2-hd.pvr_2.PNG");
+    cacheImage("GameSelectionScene/Items03-hd.pvr_0.PNG");
+    cacheImage("GameSelectionScene/themescene2-hd.pvr_0.PNG");
+    cacheImage("GameSelectionScene/themescene1-hd_10.PNG");
+    cacheImage("GameSelectionScene/themescene2-hd.pvr_1.PNG");
+    cacheImage("GameSelectionScene/evaluate.png");
+    cacheImage("GameSelectionScene/close_evaluate_normal.png");
+    cacheImage("GameSelectionScene/close_evaluate_selected.png");
+    cacheImage("GameSelectionScene/level_2_lock.png");
+    cacheImage("GameSelectionScene/lock_btn_normal.png");
+    cacheImage("GameSelectionScene/lock_btn_selected.png");
+    cacheImage("GameSelectionScene/level_3_lock.png");
+    //cacheImage();
+    //cacheImage();
+    //cacheImage();
+    //cacheImage();
+    //cacheImage();
+    //cacheImage();
+    //cacheImage();
+    //cacheImage();
+    //cacheImage();
+    //cacheImage();
+    //cacheImage();
+    //cacheImage();
 }
 void LoadingScene::check(float dt)
 {

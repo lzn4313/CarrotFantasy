@@ -1,6 +1,5 @@
 #include "FrontEnd/MenuScene.h"
 #include "FrontEnd/HelperScene.h"
-#include "ui/CocosGUI.h"
 #include"Config/sound&music.h"
 USING_NS_CC;
 /*****************************  HelperScene¿‡  ***********************************************************/
