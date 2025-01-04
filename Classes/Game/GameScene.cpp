@@ -10,6 +10,7 @@
 #include<vector>
 #include "LevelLayer.h"
 #include "Facade.h"
+#include "GameMap.h"
 USING_NS_CC;
 using namespace cocos2d::ui;
 /*******************************  ¥ÌŒÛ¥¶¿Ì  ************************************/
