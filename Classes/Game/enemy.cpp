@@ -54,18 +54,18 @@ void Enemy::setType(int selection)
 	string road2 = MONSTER_BASE_PICTURE;
 	Vector<SpriteFrame*> monster;
 	this->enemy.time = 0;
-	
+
 	switch (selection)
 	{
 	case 0:
 		monster.pushBack(SpriteFrame::create(road2 + picture[0], Rect(0, 0, 68, 87)));
 		monster.pushBack(SpriteFrame::create(road2 + pic[0], Rect(0, 0, 75, 74)));
-		
+
 		this->runAction(RepeatForever::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(monster, 0.1)), nullptr)));
 		this->enemy.coin = MONSTER_COIN_NORMAL;
 		this->enemy.damage = 1;
-		this->enemy.hp = MONSTER_NORMAL_HP * (game_waves + 1)/2;
-		this->enemy.full_hp = MONSTER_NORMAL_HP * (game_waves + 1)/2;
+		this->enemy.hp = MONSTER_NORMAL_HP * (game_waves + 1);
+		this->enemy.full_hp = MONSTER_NORMAL_HP * (game_waves + 1);
 		this->enemy.speed = MONSTER_NORMAL_SPEED;
 		this->enemy.origin_speed = MONSTER_NORMAL_SPEED;
 		break;
@@ -75,8 +75,8 @@ void Enemy::setType(int selection)
 		this->runAction(RepeatForever::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(monster, 0.1)), nullptr)));
 		this->enemy.coin = MONSTER_COIN_NORMAL;
 		this->enemy.damage = 1;
-		this->enemy.hp = MONSTER_FAST_HP * (game_waves + 1)/2;
-		this->enemy.full_hp = MONSTER_FAST_HP  * (game_waves + 1)/2;
+		this->enemy.hp = MONSTER_FAST_HP * (game_waves + 1) / 2;
+		this->enemy.full_hp = MONSTER_FAST_HP * (game_waves + 1) / 2;
 		this->enemy.speed = MONSTER_FAST_SPEED;
 		this->enemy.origin_speed = MONSTER_FAST_SPEED;
 		break;
@@ -86,8 +86,8 @@ void Enemy::setType(int selection)
 		this->runAction(RepeatForever::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(monster, 0.1)), nullptr)));
 		this->enemy.coin = MONSTER_COIN_HUGE;
 		this->enemy.damage = 2;
-		this->enemy.hp = MONSTER_HUGE_HP * (game_waves + 1);
-		this->enemy.full_hp = MONSTER_HUGE_HP * (game_waves + 1);
+		this->enemy.hp = MONSTER_HUGE_HP * (game_waves + 1) * 3;
+		this->enemy.full_hp = MONSTER_HUGE_HP * (game_waves + 1) * 3;
 		this->enemy.speed = MONSTER_HUGE_SPEED;
 		this->enemy.origin_speed = MONSTER_HUGE_SPEED;
 		break;
@@ -462,8 +462,8 @@ void EnemyState::baseMovementCalculate(float dt, Enemy* enemy, double speed_rate
 {
 	Enemy_information* current = enemy->get_information();
 	if (if_pause == 0 && current->speed > 0) {//无暂停和速度大于0(即非障碍物)则动
-		int x = enemy->getPositionX();
-		int y = enemy->getPositionY();
+		float x = enemy->getPositionX();
+		float y = enemy->getPositionY();
 		static vec2 startPosition = trans_ij_to_xy(levelPath[0].point);
 		//出场动画
 		int ix = 0, iy = 0;
@@ -493,11 +493,7 @@ void EnemyState::baseMovementCalculate(float dt, Enemy* enemy, double speed_rate
 			vec2 nextPosition;
 			nextPosition = trans_ij_to_xy(levelPath[current->count + 1].point);
 			current->total_length = current->total_length + fabs(this_x) + fabs(this_y);
-			int range = 6;
-			if (current->type == FLY) {
-				range = 9;
-			}
-			if (((fabs(x + this_x - nextPosition.x) < range) || ix == 0) && ((fabs(y + this_y - nextPosition.y) < range) || iy == 0))
+			if (((ix * (x + this_x - nextPosition.x) >= 0) || ix == 0) && ((iy * (y + this_y - nextPosition.y) >= 0) || iy == 0))
 				current->count++;
 		}
 

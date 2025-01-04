@@ -27,7 +27,7 @@
 #define MONSTER_NORMAL_HP     3 * MONSTER_FAST_HP    //普通怪血量
 #define MONSTER_HUGE_HP       10 * MONSTER_NORMAL_HP  //巨型怪血量
 
-#define MONSTER_HUGE_SPEED    80                  //巨型怪移动速度，蜗牛爬，待改动！！！！
+#define MONSTER_HUGE_SPEED    50                 //巨型怪移动速度，蜗牛爬，待改动！！！！
 #define MONSTER_NORMAL_SPEED  150                      //正常怪移速
 #define MONSTER_FAST_SPEED    2*MONSTER_NORMAL_SPEED   //高速怪移速
 
