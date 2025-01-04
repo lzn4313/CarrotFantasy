@@ -1,6 +1,7 @@
 #pragma once
 #include "cocos2d.h"
 #include "GameScene.h"
+#include <vector>
 
 #define BARRIER 0
 #define MONSTER 1
@@ -23,10 +24,10 @@
 
 #define MONSTER_FAST_HP       20                     //高速怪的基础血量
 #define MONSTER_NORMAL_HP     3 * MONSTER_FAST_HP    //普通怪血量
-#define MONSTER_HUGE_HP       3 * MONSTER_NORMAL_HP  //巨型怪血量
+#define MONSTER_HUGE_HP       10 * MONSTER_NORMAL_HP  //巨型怪血量
 
-#define MONSTER_HUGE_SPEED    100                  //巨型怪移动速度，蜗牛爬，待改动！！！！
-#define MONSTER_NORMAL_SPEED  1.5*MONSTER_HUGE_SPEED     //正常怪移速
+#define MONSTER_HUGE_SPEED    80                  //巨型怪移动速度，蜗牛爬，待改动！！！！
+#define MONSTER_NORMAL_SPEED  150                      //正常怪移速
 #define MONSTER_FAST_SPEED    2*MONSTER_NORMAL_SPEED   //高速怪移速
 
 #define MONSTER_COIN_NORMAL   18                       //正常怪和高速怪掉落金币
@@ -46,7 +47,7 @@
 #define BARRIER_5 7
 #define BARRIER_6 8
 
-
+struct Enemy;
 struct Tower_information;
 struct Enemy_information {
 	int type;                                     //记录怪物种类
@@ -61,6 +62,7 @@ struct Enemy_information {
 	int full_hp;                                  //记录满血血量
 	float total_length = 0;						  //记录走过的路程长度
 	pos position;                                 //记录障碍物位置
+	std::vector<Enemy*> subscribers;                   //记录场上所有怪
 		Enemy_information(int _type=0,int originalHp = 0, int originalSpeed = 200, int defeatedCoin = 0, int realDamage = 0, int n = 0,int currentTime=0,pos Position={0,0})
 		:type(_type),hp(originalHp), speed(originalSpeed), coin(defeatedCoin), damage(realDamage), count(n),origin_speed(originalSpeed),time(currentTime),full_hp(originalHp),position(Position)
 	{
@@ -86,4 +88,6 @@ public:
 	void showHp(int appear_waves);
 	void death();
 	bool declineHp(Tower_information tower, int op);
+	void updateSubscriber(std::vector <Enemy*>subscribers);
+	void setHp(int Hp);
 };

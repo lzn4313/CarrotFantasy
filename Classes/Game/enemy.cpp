@@ -155,6 +155,7 @@ void Enemy::setType(int selection)
 void Enemy::update(float dt)
 {
 	sort(monster.begin(), monster.end(), [](Enemy* a, Enemy* b) {return  a->enemy.get_length() > b->enemy.get_length(); });
+	this->updateSubscriber(monster);
 	if (destination == this) {
 		this->getChildByName("Selected")->setVisible(true);
 	}
@@ -195,6 +196,7 @@ bool Enemy::declineHp(Tower_information tower, int op)
 {
 	if (enemy.hp > 0 && tower.attack > 0) {
 		if (op == 0) {
+
 			Vec2 currentPosition = this->getPosition();
 			Vector<SpriteFrame*> attacked;
 			auto sprite = Sprite::create();
@@ -428,9 +430,27 @@ void Enemy::death()
 	}
 	if (enemy.type <= 2) {
 		monster.erase(find_if(monster.begin(), monster.end(), [this](const Enemy* enemy) {return enemy == this; }));
+		if (enemy.type == 2) {
+			for (int i = 0; i < monster.size(); i++) {
+				monster[i]->setHp(0);
+			}
+		}
 	}
 	else {
 		barrier.erase(find_if(barrier.begin(), barrier.end(), [this](const Enemy* enemy) {return enemy == this; }));
 	}
+
 	return;
+}
+
+void Enemy::updateSubscriber(std::vector <Enemy*>subscribers)
+{
+	if (this->enemy.type == MONSTER_HUGE) {
+		this->enemy.subscribers.assign(subscribers.begin(), subscribers.end());
+	}
+}
+
+void Enemy::setHp(int Hp)
+{
+	this->enemy.hp = Hp;
 }
