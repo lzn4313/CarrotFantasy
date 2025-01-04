@@ -7,6 +7,7 @@
 #include <vector>
 #include<algorithm>
 #include <math.h>
+#include <memory>
 USING_NS_CC;
 extern int if_speed_up;
 extern int game_waves;
@@ -38,7 +39,7 @@ bool Enemy::init()
 	if (!Sprite::init()) {
 		return false;
 	}
-	
+	this->currentState = make_unique<normalState>();
 	this->scheduleUpdate();
 	return true;
 }
@@ -164,17 +165,9 @@ void Enemy::update(float dt)
 	}
 
 	static int appear_waves = game_waves;
-	//减速状态时间累计判断
-	if (enemy.origin_speed > enemy.speed) {
-		enemy.time += dt * (1 + if_speed_up) * (1 - if_pause) * 100;
-		if (enemy.time > 300) {
-			enemy.time = 0;
-			this->removeChildByName("shit");
-			enemy.speed = enemy.origin_speed;
-		}
-	}
+	
 	//对于移动的判断
-	this->move(dt);
+	this->currentState->move(dt,this);
 	if (levelPath[enemy.count].direction == 'o') {
 		this->removeFromParent(); 
 		return;
@@ -230,9 +223,9 @@ bool Enemy::declineHp(Tower_information tower, int op)
 			if (enemy.origin_speed != 0) {//非障碍判断
 				if (tower.attack_special == Slow) {
 					if (tower.level == 1)
-						enemy.speed = enemy.origin_speed * 0.8;
+						this->setState(make_unique<decreaseStateOne>());
 					else if (tower.level == 2||tower.level == 3)
-						enemy.speed = enemy.origin_speed * 0.6;
+						this->setState(make_unique<decreaseStateTwo>());
 					if (tower.name_tag == Tower_Shit && enemy.time == 0) {
 						auto slowByShit = Sprite::create();
 						Vector<SpriteFrame*>shit;
@@ -274,7 +267,7 @@ bool Enemy::declineHp(Tower_information tower, int op)
 }
 
 //移动函数
-void Enemy::move(float dt)
+/*void Enemy::move(float dt)
 {
 	if (if_pause == 0 && enemy.speed > 0) {//无暂停和速度大于0(即非障碍物)则动
 		int x = this->getPositionX();
@@ -349,7 +342,7 @@ void Enemy::move(float dt)
 
 
 	}
-}
+}*/
 
 //显示血条
 void Enemy::showHp(int appear_waves)
@@ -453,4 +446,122 @@ void Enemy::updateSubscriber(std::vector <Enemy*>subscribers)
 void Enemy::setHp(int Hp)
 {
 	this->enemy.hp = Hp;
+}
+
+Enemy_information* Enemy::get_information()
+{
+	return &(this->enemy);
+}
+
+void Enemy::setState(std::unique_ptr<EnemyState> state)
+{
+	this->currentState = move(state);  // 切换到新状态
+}
+
+void EnemyState::baseMovementCalculate(float dt, Enemy* enemy, double speed_rate)
+{
+	Enemy_information* current = enemy->get_information();
+	if (if_pause == 0 && current->speed > 0) {//无暂停和速度大于0(即非障碍物)则动
+		int x = enemy->getPositionX();
+		int y = enemy->getPositionY();
+		static vec2 startPosition = trans_ij_to_xy(levelPath[0].point);
+		//出场动画
+		int ix = 0, iy = 0;
+		if (levelPath[current->count].direction == 's') {
+			ix = 0;
+			iy = -1;
+		}
+		else if (levelPath[current->count].direction == 'w') {
+			ix = 0;
+			iy = 1;
+		}
+		else if (levelPath[current->count].direction == 'a') {
+			ix = -1;
+			iy = 0;
+		}
+		else if (levelPath[current->count].direction == 'd') {
+			ix = 1;
+			iy = 0;
+		}
+		else if (levelPath[current->count].direction == 'o') {
+			ix = 0;
+			iy = 0;
+		}
+		double this_x = current->speed * (if_speed_up + 1) * dt * ix * speed_rate;
+		double this_y = current->speed * (if_speed_up + 1) * dt * iy * speed_rate;
+		if (current->count + 1 != levelPath.size()) {
+			vec2 nextPosition;
+			nextPosition = trans_ij_to_xy(levelPath[current->count + 1].point);
+			current->total_length = current->total_length + fabs(this_x) + fabs(this_y);
+			int range = 6;
+			if (current->type == FLY) {
+				range = 9;
+			}
+			if (((fabs(x + this_x - nextPosition.x) < range) || ix == 0) && ((fabs(y + this_y - nextPosition.y) < range) || iy == 0))
+				current->count++;
+		}
+
+		//到终点处理
+		enemy->setPosition(Vec2(x + this_x, y + this_y));
+		if (levelPath[current->count].direction == 'o') {
+			enemy->unscheduleUpdate();
+			SoundManager::getInstance()->carrot_eaten_sound_effect();
+			carrot_hp -= current->damage;
+			Vector<SpriteFrame*> death;
+			death.pushBack(SpriteFrame::create("/Enemy/monster/1.PNG", Rect(0, 0, 109, 99)));
+			death.pushBack(SpriteFrame::create("/Enemy/monster/2.PNG", Rect(0, 0, 111, 114)));
+			death.pushBack(SpriteFrame::create("/Enemy/monster/3.PNG", Rect(0, 0, 194, 197)));
+			death.pushBack(SpriteFrame::create("/Enemy/monster/4.PNG", Rect(0, 0, 256, 211)));
+			death.pushBack(SpriteFrame::create("/Enemy/monster/5.PNG", Rect(0, 0, 154, 163)));
+			death.pushBack(SpriteFrame::create("/Enemy/monster/6.PNG", Rect(0, 0, 275, 277)));
+			auto sprite = Sprite::create();
+			vec2 nextPosition = trans_ij_to_xy(levelPath[levelPath.size() - 1].point);
+			sprite->runAction(Repeat::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(death, 0.05 / (1 + if_speed_up))), FadeOut::create(0.2 / (1 + if_speed_up)), CallFunc::create([sprite]() {sprite->removeFromParent(); }), nullptr), 1));
+			sprite->setPosition(Vec2(nextPosition.x, nextPosition.y));
+			enemy->getParent()->addChild(sprite);
+			if (destination == enemy) {
+				destination = nullptr;
+			}
+			if (current->type <= 2) {
+				monster.erase(find_if(monster.begin(), monster.end(), [enemy](const Enemy* enemyAlive) {return enemyAlive == enemy; }));
+			}
+			else {
+				barrier.erase(find_if(barrier.begin(), barrier.end(), [enemy](const Enemy* enemyAlive) {return enemyAlive == enemy; }));
+			}
+			//enemy->removeFromParent();
+			return;
+		}
+	}
+}
+
+void decreaseStateOne::move(float dt, Enemy* enemy) 
+{
+	Enemy_information* current = enemy->get_information();
+	current->time += dt * (1 + if_speed_up) * (1 - if_pause) * 100;
+	double speed_rate = 0.8;
+	this->baseMovementCalculate(dt, enemy, speed_rate);	
+	if (current->time > 300) {
+		current->time = 0;
+		enemy->removeChildByName("shit");
+		enemy->setState(make_unique<normalState>());
+	}
+}
+
+void decreaseStateTwo::move(float dt, Enemy* enemy)
+{
+	Enemy_information* current = enemy->get_information();
+	current->time += dt * (1 + if_speed_up) * (1 - if_pause) * 100;
+	double speed_rate = 0.6;
+	this->baseMovementCalculate(dt, enemy, speed_rate);
+	if (current->time > 300) {
+		current->time = 0;
+		enemy->removeChildByName("shit");
+		enemy->setState(make_unique<normalState>());
+	}
+}
+
+void normalState::move(float dt, Enemy* enemy)
+{
+	double speed_rate = 1;
+	this->baseMovementCalculate(dt, enemy, speed_rate);
 }

@@ -2,6 +2,7 @@
 #include "cocos2d.h"
 #include "GameScene.h"
 #include <vector>
+#include <memory>
 
 #define BARRIER 0
 #define MONSTER 1
@@ -47,8 +48,35 @@
 #define BARRIER_5 7
 #define BARRIER_6 8
 
+class EnemyState;
 struct Enemy;
 struct Tower_information;
+
+class EnemyState {
+public:
+	virtual ~EnemyState() = default;
+	virtual void move(float dt, Enemy* enemy) = 0;
+	void baseMovementCalculate(float dt, Enemy* enemy, double speed_rate);
+};
+
+//1级减速
+class decreaseStateOne : public EnemyState{
+public:
+	void move(float dt, Enemy* enemy) override;
+};
+
+//2、3级减速
+class decreaseStateTwo : public EnemyState {
+public:
+	void move(float dt, Enemy* enemy) override;
+};
+
+//正常状态
+class normalState :public EnemyState {
+public:
+	void move(float dt, Enemy* enemy) override;
+};
+
 struct Enemy_information {
 	int type;                                     //记录怪物种类
 	int hp;                                       //记录怪物血量
@@ -77,6 +105,7 @@ class Enemy : public cocos2d::Sprite
 	friend class Tower_body;
 private:
 	Enemy_information enemy;
+	std::unique_ptr<EnemyState> currentState;
 public:
     static cocos2d::Sprite* createSprite();
 	virtual bool init();
@@ -84,10 +113,12 @@ public:
 	virtual void update(float dt);
 	void setType(int selection);
 	void set_position(pos _position) { enemy.position = _position; }
-	void move(float dt);
+	//void move(float dt);
 	void showHp(int appear_waves);
 	void death();
 	bool declineHp(Tower_information tower, int op);
 	void updateSubscriber(std::vector <Enemy*>subscribers);
 	void setHp(int Hp);
+	Enemy_information* get_information();
+	void setState(std::unique_ptr<EnemyState> state);
 };
