@@ -4,6 +4,8 @@
 #include"Game/EnemyCreate.h"
 #include<vector>
 #include<algorithm>
+#include <iostream>
+#include <cstdio>
 using namespace std;
 USING_NS_CC;
 
@@ -29,85 +31,124 @@ void EnemyCreate::SetLevel(int level_selection) {
 	barrier.clear();
 	level = level_selection;
 	vector<int>waves;
-	if (level == 1) {
-		//第一关
-		start_position = { 1,1 };
-		current_waves = 1;
-		max_waves = 15;
-		//每一波怪物存储
-		//前三波全是普通怪
+	string path = format("Level/enemy_{}.txt",level_selection);
+	path = FileUtils::getInstance()->fullPathForFilename(path);
+	auto file = fopen(path.c_str(), "r");
+	int a, b, c,d,e,f,g,h,i,j;
+	fscanf(file, "%d %d", &a, &b);
+	start_position={ a,b };
+	fscanf(file, "%d %d",&current_waves,&max_waves);
+	for (a = 0; a < max_waves; a++) {
+		fscanf(file, "%d", &b);
+		for (int j = 0; j < b; j++) {
+			fscanf(file, "%d", &c);
+			waves.push_back(c);
+		}
+		monster_data.push_back(waves);
 		waves.clear();
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 10; j++) {
-				waves.push_back(NORMAL);
-			}
-			monster_data.push_back(waves);
-			waves.clear();
-		}
-		//后12波普通怪5个，飞行怪5个
-		for (int i = 3; i < 15; i++) {
-			for (int j = 0; j < 5; j++) {
-				waves.push_back(NORMAL);
-			}
-			for (int j = 0; j < 5; j++) {
-				waves.push_back(FLY);
-			}
-			monster_data.push_back(waves);
-			waves.clear();
-		}
-		//障碍物
-		barrier_appear(BARRIER_6, { 1,3 }, { 1,4 }, { 0,3 });
-		barrier_appear(BARRIER_6, { 1,7 }, { 1,8 }, { 0,7 });
-		barrier_appear(BARRIER_5, { 1,5 }, { 1,6 }, { 0,5 });
-		barrier_appear(BARRIER_3, { 4,5 }, { 4,6 });
-		barrier_appear(BARRIER_2, { 3,2 });
-		barrier_appear(BARRIER_1, { 2,4 });
-		barrier_appear(BARRIER_1, { 2,7 });
-		barrier_appear(BARRIER_2, { 3,9 });
-
 	}
-	else if (level == 2) {
-		//第二关
-		start_position = { 1,4 };
-		current_waves = 1;
-		max_waves = 15;
-		//每一波怪物存储
-		//前两波全是普通怪
-		waves.clear();
-		for (int i = 0; i < 2; i++) {
-			for (int j = 0; j < 10; j++) {
-				waves.push_back(NORMAL);
-			}
-			if (i == 1) {
-				waves.push_back(BOSS);
-			}
-			monster_data.push_back(waves);
-			waves.clear();
+	fscanf(file, "%d", &a);
+	for (b = 0; b < a; b++) {
+		fscanf(file, "%d", &c);
+		switch (c) {
+			case BARRIER_1:
+			case BARRIER_2:
+				fscanf(file, "%d %d", &d, &e);
+				barrier_appear(c, { d,e });
+				break;
+			case BARRIER_3:
+			case BARRIER_4:
+				fscanf(file, "%d %d %d %d", &d, &e, &f, &g);
+				barrier_appear(c, { d,e }, { f,g });
+				break;
+			case BARRIER_5:
+			case BARRIER_6:
+				fscanf(file, "%d %d %d %d %d %d", &d, &e, &f, &g, &h, &i);
+				barrier_appear(c, { d,e }, { f,g }, { h,i });
+				break;
+			default:
+				break;
 		}
-		//后13波普通怪5个，飞行怪5个
-		//最后一波加一个boss
-		for (int i = 2; i < 15; i++) {
-			for (int j = 0; j < 5; j++) {
-				waves.push_back(NORMAL);
-			}
-			for (int j = 0; j < 5; j++) {
-				waves.push_back(FLY);
-			}
-			monster_data.push_back(waves);
-			waves.clear();
-		}
-
-		//障碍物
-		barrier_appear(BARRIER_2, { 4,5 });
-		barrier_appear(BARRIER_1, { 2,4 });
-		barrier_appear(BARRIER_1, { 2,8 });
-		barrier_appear(BARRIER_1, { 1,11 });
-		barrier_appear(BARRIER_1, { 4,3 });
-		barrier_appear(BARRIER_3, { 4,0 }, { 4,1 });
-		barrier_appear(BARRIER_4, { 4,8 }, { 4,9 });
-		barrier_appear(BARRIER_6, { 1,1 }, { 1,2 }, { 0,1 });
-		barrier_appear(BARRIER_5, { 3,10 }, { 3,11 }, { 2,10 });
 	}
+	//if (level == 1) {
+	//	//第一关
+	//	start_position = { 1,1 };
+	//	current_waves = 1;
+	//	max_waves = 15;
+	//	//每一波怪物存储
+	//	//前三波全是普通怪
+	//	waves.clear();
+	//	for (int i = 0; i < 3; i++) {
+	//		for (int j = 0; j < 10; j++) {
+	//			waves.push_back(NORMAL);
+	//		}
+	//		monster_data.push_back(waves);
+	//		waves.clear();
+	//	}
+	//	//后12波普通怪5个，飞行怪5个
+	//	for (int i = 3; i < 15; i++) {
+	//		for (int j = 0; j < 5; j++) {
+	//			waves.push_back(NORMAL);
+	//		}
+	//		for (int j = 0; j < 5; j++) {
+	//			waves.push_back(FLY);
+	//		}
+	//		monster_data.push_back(waves);
+	//		waves.clear();
+	//	}
+	//	//障碍物
+	//	barrier_appear(BARRIER_6, { 1,3 }, { 1,4 }, { 0,3 });
+	//	barrier_appear(BARRIER_6, { 1,7 }, { 1,8 }, { 0,7 });
+	//	barrier_appear(BARRIER_5, { 1,5 }, { 1,6 }, { 0,5 });
+	//	barrier_appear(BARRIER_3, { 4,5 }, { 4,6 });
+	//	barrier_appear(BARRIER_2, { 3,2 });
+	//	barrier_appear(BARRIER_1, { 2,4 });
+	//	barrier_appear(BARRIER_1, { 2,7 });
+	//	barrier_appear(BARRIER_2, { 3,9 });
+
+	//}
+	//else if (level == 2) {
+	//	//第二关
+	//	start_position = { 1,4 };
+	//	current_waves = 1;
+	//	max_waves = 15;
+	//	//每一波怪物存储
+	//	//前两波全是普通怪
+	//	waves.clear();
+	//	for (int i = 0; i < 2; i++) {
+	//		for (int j = 0; j < 10; j++) {
+	//			waves.push_back(NORMAL);
+	//		}
+	//		if (i == 1) {
+	//			waves.push_back(BOSS);
+	//		}
+	//		monster_data.push_back(waves);
+	//		waves.clear();
+	//	}
+	//	//后13波普通怪5个，飞行怪5个
+	//	//最后一波加一个boss
+	//	for (int i = 2; i < 15; i++) {
+	//		for (int j = 0; j < 5; j++) {
+	//			waves.push_back(NORMAL);
+	//		}
+	//		for (int j = 0; j < 5; j++) {
+	//			waves.push_back(FLY);
+	//		}
+	//		monster_data.push_back(waves);
+	//		waves.clear();
+	//	}
+
+	//	//障碍物
+	//	barrier_appear(BARRIER_2, { 4,5 });
+	//	barrier_appear(BARRIER_1, { 2,4 });
+	//	barrier_appear(BARRIER_1, { 2,8 });
+	//	barrier_appear(BARRIER_1, { 1,11 });
+	//	barrier_appear(BARRIER_1, { 4,3 });
+	//	barrier_appear(BARRIER_3, { 4,0 }, { 4,1 });
+	//	barrier_appear(BARRIER_4, { 4,8 }, { 4,9 });
+	//	barrier_appear(BARRIER_6, { 1,1 }, { 1,2 }, { 0,1 });
+	//	barrier_appear(BARRIER_5, { 3,10 }, { 3,11 }, { 2,10 });
+	//}
 }
 /*出怪*/
 void EnemyCreate::monster_appear(int Type) {
