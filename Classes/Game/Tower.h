@@ -1,3 +1,5 @@
+#ifndef __Tower_H__
+#define __Tower_H__
 #include "cocos2d.h"
 #include "Game/GameScene.h"
 #include "Game/enemy.h"
@@ -86,3 +88,5 @@ public:
 };
 
 int getMoney(int tag);//根据名称标签获得初始价值
+
+#endif // __Shop_H__

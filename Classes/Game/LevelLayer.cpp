@@ -4,12 +4,14 @@
 #include"Game/GameScene.h"
 #include"Game/enemy.h"
 #include<algorithm>
+#include<format>
+#include<string>
+#include "Facade.h"
 
 USING_NS_CC;
 using namespace std;
 extern int if_speed_up;//是否加速
 extern int if_pause;//是否暂停
-extern int game_money;//金钱
 extern int game_waves;//当前波数
 extern int max_waves;//总波数
 extern char game_map[7][12];//辅助地图数组
@@ -40,7 +42,7 @@ bool LevelLayer::init(int level)
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     /***********************  部分全局变量初始化  *******************/
     //更新金钱显示
-    game_money = 450;
+    Facade::getInstance()->getShop()->setGameMoney(450);
     //更新波数显示
     game_waves = 0;
     max_waves = 15;

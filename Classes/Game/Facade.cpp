@@ -22,4 +22,16 @@ void Facade::clear()
 Facade::Facade()
 {
 	gameMenu = nullptr;
+	shop = new Shop();
+	gamecontroller = new GameController();
+}
+
+Shop* Facade::getShop()
+{
+	return shop;
+}
+
+GameController* Facade::getGameController()
+{
+	return gamecontroller;
 }

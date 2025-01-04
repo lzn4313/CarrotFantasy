@@ -6,12 +6,14 @@
 #include<algorithm>
 #include <iostream>
 #include <cstdio>
+#include<string>
+#include<format>
+#include "Facade.h"
+
 using namespace std;
 USING_NS_CC;
 
 extern int game_waves;
-extern int if_speed_up;
-extern int if_pause;
 extern vector<Enemy*> monster;
 extern vector<Enemy*> barrier;
 extern char game_map[7][12];
@@ -228,7 +230,7 @@ void EnemyCreate::update(float dt) {
 	static float clear_time = 0;
 	static int n = 0;
 	static int flag = 0;
-	if (if_pause == 0) {
+	if (Facade::getInstance()->getGameController()->getPause() == 0) {
 		if (flag == 0) {
 			if (monster.size() == 0 && clear_time >= 2) {
 				flag = 1;
@@ -253,15 +255,14 @@ void EnemyCreate::update(float dt) {
 				n = 0;
 				current_waves += 1;
 				if (current_waves == max_waves + 1) {
-					extern int all_clear;
-					all_clear= 1;
+					Facade::getInstance()->getGameController()->setAllClear(1);
 				}
 			}
 		}
 		if (monster.size() == 0 && n == 0 && flag == 0) {
-			clear_time += dt * (if_speed_up + 1);
+			clear_time += dt * (Facade::getInstance()->getGameController()->getSpeedUp() + 1);
 		}
-		time += dt * (if_speed_up + 1);
+		time += dt * (Facade::getInstance()->getGameController()->getSpeedUp() + 1);
 	}
 }
 

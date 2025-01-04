@@ -3,13 +3,12 @@
 #include"Game/enemy.h"
 #include <string>
 #include <cmath>
+#include "Facade.h"
 USING_NS_CC;
 using namespace cocos2d::ui;
 
 extern Tower* tower_map[7][12];//记录地图上的炮台信息
 extern char game_map[7][12];//辅助地图数组
-extern int if_speed_up;//是否加速
-extern int if_pause;//是否暂停
 extern int carrot_hp;//记录萝卜血量
 extern int carrot_level;//记录萝卜等级
 extern pos carrot_position;//记录萝卜位置
@@ -74,7 +73,7 @@ bool Tower_body::init()
 /*重写update函数*/
 void Tower_body::update(float dt)
 {
-	if (if_pause == 0) {
+	if (Facade::getInstance()->getGameController()->getPause() == 0) {
 		time += dt;
 		Vec2 my_position = this->getPosition();
 		Vec2 enemy_position;
@@ -108,7 +107,7 @@ void Tower_body::update(float dt)
 		}
 
 		if (target != nullptr) {
-			if (time >= (if_speed_up == 0 ? (4 / tower_information.attack_speed) : (2 / tower_information.attack_speed))) {
+			if (time >= (Facade::getInstance()->getGameController()->getSpeedUp() == 0 ? (4 / tower_information.attack_speed) : (2 / tower_information.attack_speed))) {
 				time = 0;
 				Node* this_layer = this->getParent();
 				Layer* ThisLayer = static_cast<Layer*>(this_layer);
@@ -170,7 +169,7 @@ void Tower_body::update(float dt)
 						});
 
 					bullet->setRotation(r);
-					auto bullet_move_to = cocos2d::MoveTo::create(if_speed_up == 0 ? 0.2 : 0.2 / 2, target->getPosition());
+					auto bullet_move_to = cocos2d::MoveTo::create(Facade::getInstance()->getGameController()->getSpeedUp() == 0 ? 0.2 : 0.2 / 2, target->getPosition());
 					bullet->runAction(Sequence::create(bullet_move_to, DelayTime::create(0), remove_bullet, DelayTime::create(0), attacked, nullptr));
 					ThisLayer->addChild(bullet);
 				}
@@ -226,7 +225,7 @@ void Tower_body::update(float dt)
 						});
 
 					bullet->setRotation(r);
-					auto bullet_move_to = cocos2d::MoveTo::create((if_speed_up == 0 ? 0.25 : (0.25 / 2)), target->getPosition());
+					auto bullet_move_to = cocos2d::MoveTo::create((Facade::getInstance()->getGameController()->getSpeedUp() == 0 ? 0.25 : (0.25 / 2)), target->getPosition());
 					bullet->runAction(Sequence::create(bullet_move_to, DelayTime::create(0), remove_bullet, DelayTime::create(0), attacked, nullptr));
 					ThisLayer->addChild(bullet);
 				}
@@ -294,8 +293,8 @@ void Tower_body::update(float dt)
 						}
 						});
 
-					auto bullet_move_to = cocos2d::MoveTo::create(if_speed_up == 0 ? 0.33 : 0.33 / 2, target->getPosition());
-					auto rotate = Spawn::create(bullet_move_to, Repeat::create(RotateBy::create(if_speed_up == 0 ? 0.33 : 0.33 / 2, 360), 1), nullptr);
+					auto bullet_move_to = cocos2d::MoveTo::create(Facade::getInstance()->getGameController()->getSpeedUp() == 0 ? 0.33 : 0.33 / 2, target->getPosition());
+					auto rotate = Spawn::create(bullet_move_to, Repeat::create(RotateBy::create(Facade::getInstance()->getGameController()->getSpeedUp() == 0 ? 0.33 : 0.33 / 2, 360), 1), nullptr);
 					bullet->runAction(Sequence::create(rotate, DelayTime::create(0), remove_bullet, DelayTime::create(0), attacked, nullptr));
 					ThisLayer->addChild(bullet);
 				}

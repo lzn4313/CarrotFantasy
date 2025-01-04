@@ -7,16 +7,13 @@
 #include <vector>
 #include<algorithm>
 #include <math.h>
+#include "Facade.h"
 USING_NS_CC;
-extern int if_speed_up;
 extern int game_waves;
-extern int if_pause;
 extern const char level_1_1_map[7][12];
 extern vector<LevelPath>levelPath;
 extern int carrot_hp;
 extern char game_map[7][12];
-extern int money_total;
-extern int game_money;//金钱
 extern int monster_total;//击杀怪物总数
 extern int boss_total;//击杀boss总数
 extern int barrier_total;//摧毁障碍总数
@@ -165,7 +162,7 @@ void Enemy::update(float dt)
 	static int appear_waves = game_waves;
 	//减速状态时间累计判断
 	if (enemy.origin_speed > enemy.speed) {
-		enemy.time += dt * (1 + if_speed_up) * (1 - if_pause) * 100;
+		enemy.time += dt * (1 + Facade::getInstance()->getGameController()->getSpeedUp()) * (1 - Facade::getInstance()->getGameController()->getPause()) * 100;
 		if (enemy.time > 300) {
 			enemy.time = 0;
 			this->removeChildByName("shit");
@@ -173,7 +170,7 @@ void Enemy::update(float dt)
 		}
 	}
 	//对于移动的判断
-	if (if_pause == 0&&enemy.speed>0) {//无暂停和速度大于0(即非障碍物)则动
+	if (Facade::getInstance()->getGameController()->getPause() == 0 && enemy.speed>0) {//无暂停和速度大于0(即非障碍物)则动
 		int x = this->getPositionX();
 		int y = this->getPositionY();
 		static vec2 startPosition = trans_ij_to_xy(levelPath[0].point);
@@ -199,8 +196,8 @@ void Enemy::update(float dt)
 			ix = 0;
 			iy = 0;
 		}
-		double this_x = enemy.speed * (if_speed_up + 1) * dt * ix;
-		double this_y = enemy.speed * (if_speed_up + 1) * dt * iy;
+		double this_x = enemy.speed * (Facade::getInstance()->getGameController()->getSpeedUp() + 1) * dt * ix;
+		double this_y = enemy.speed * (Facade::getInstance()->getGameController()->getSpeedUp() + 1) * dt * iy;
 		if (enemy.count + 1!=levelPath.size()) {
 			vec2 nextPosition;
 			nextPosition = trans_ij_to_xy(levelPath[enemy.count + 1].point);
@@ -226,7 +223,7 @@ void Enemy::update(float dt)
 			death.pushBack(SpriteFrame::create("/Enemy/monster/6.PNG", Rect(0, 0, 275, 277)));
 			auto sprite = Sprite::create();
 			vec2 nextPosition = trans_ij_to_xy(levelPath[levelPath.size()-1].point);
-			sprite->runAction(Repeat::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(death, 0.05 / (1 + if_speed_up))), FadeOut::create(0.2 / (1 + if_speed_up)), CallFunc::create([sprite]() {sprite->removeFromParent(); }), nullptr), 1));
+			sprite->runAction(Repeat::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(death, 0.05 / (1 + Facade::getInstance()->getGameController()->getSpeedUp()))), FadeOut::create(0.2 / (1 + Facade::getInstance()->getGameController()->getSpeedUp())), CallFunc::create([sprite]() {sprite->removeFromParent(); }), nullptr), 1));
 			sprite->setPosition(Vec2(nextPosition.x, nextPosition.y));
 			this->getParent()->addChild(sprite);
 			if (destination == this) {
@@ -288,11 +285,10 @@ void Enemy::update(float dt)
 		death.pushBack(SpriteFrame::create("/Enemy/monster/5.PNG", Rect(0, 0, 154, 163)));
 		death.pushBack(SpriteFrame::create("/Enemy/monster/6.PNG", Rect(0, 0, 275, 277)));
 		auto sprite = Sprite::create();
-		sprite->runAction(Repeat::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(death, 0.05 / (1 + if_speed_up))), FadeOut::create(0.2 / (1 + if_speed_up)), CallFunc::create([sprite]() {sprite->removeFromParent(); }), nullptr), 1));
+		sprite->runAction(Repeat::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(death, 0.05 / (1 + Facade::getInstance()->getGameController()->getSpeedUp()))), FadeOut::create(0.2 / (1 + Facade::getInstance()->getGameController()->getSpeedUp())), CallFunc::create([sprite]() {sprite->removeFromParent(); }), nullptr), 1));
 		sprite->setPosition(Vec2(this->getPositionX(), this->getPositionY()));
 		this->getParent()->addChild(sprite);
-		money_total += enemy.coin;
-		game_money += enemy.coin;
+		Facade::getInstance()->getShop()->changeGameMoney(enemy.coin);
 		if (destination == this) {
 			destination = nullptr;
 		}
@@ -359,7 +355,7 @@ bool Enemy::declineHp(Tower_information tower, int op)
 					attacked.pushBack(SpriteFrame::create("/Tower/Star/ID3_22.PNG", Rect(0, 0, 192, 189)));
 					attacked.pushBack(SpriteFrame::create("/Tower/Star/ID3_21.PNG", Rect(0, 0, 217, 212)));
 			}
-			sprite->runAction(Repeat::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(attacked, 0.05 / (1 + if_speed_up))), FadeOut::create(0.2 / (1 + if_speed_up)), nullptr), 1));
+			sprite->runAction(Repeat::create(Sequence::create(Animate::create(Animation::createWithSpriteFrames(attacked, 0.05 / (1 + Facade::getInstance()->getGameController()->getSpeedUp()))), FadeOut::create(0.2 / (1 + Facade::getInstance()->getGameController()->getSpeedUp())), nullptr), 1));
 			sprite->setPosition(Vec2(this->getContentSize().width / 2, this->getContentSize().height / 2));
 			this->addChild(sprite);
 
@@ -398,7 +394,7 @@ bool Enemy::declineHp(Tower_information tower, int op)
 				default:
 					break;
 			}
-			sprite->runAction(Sequence::create(Blink::create(0.3 / (1 + if_speed_up), 1), FadeOut::create(0.1 / (1 + if_speed_up)), nullptr));
+			sprite->runAction(Sequence::create(Blink::create(0.3 / (1 + Facade::getInstance()->getGameController()->getSpeedUp()), 1), FadeOut::create(0.1 / (1 + Facade::getInstance()->getGameController()->getSpeedUp())), nullptr));
 			sprite->setPosition(Vec2(this->getContentSize().width / 2, this->getContentSize().height / 2));
 			this->addChild(sprite);
 		}
