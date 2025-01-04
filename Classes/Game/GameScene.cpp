@@ -1,5 +1,4 @@
 #include"Game/Level_1_1.h"
-#include"Game/Level_1_2.h"
 #include"Game/GameScene.h"
 #include"FrontEnd/GameSelectionScene.h"
 #include"Config/sound&music.h"
@@ -10,6 +9,7 @@
 #include"Game/EnemyCreate.h"
 #include<string>
 #include<vector>
+#include "LevelLayer.h"
 USING_NS_CC;
 using namespace cocos2d::ui;
 /*******************************  错误处理  ************************************/
@@ -65,16 +65,9 @@ bool GameScene::init()
     destination = nullptr;
     all_clear = 0;
     /**********************  选关  ******************************/
-    if (level_selection == 1) {
-        auto level_1_1 = Level_1_1::createLayer();
-        level_1_1->setName("PlayingLevel");
-        this->addChild(level_1_1, -1);
-    }
-    else if (level_selection == 2) {
-        auto level_1_2 = Level_1_2::createLayer();
-        level_1_2->setName("PlayingLevel");
-        this->addChild(level_1_2, -1);
-    }
+    auto level = LevelLayer::createLayer(level_selection);
+    level->setName("PlayingLevel");
+    this->addChild(level, -1);
     auto enemycreate = EnemyCreate::create();
     enemycreate->setName("EnemyCreate");
     this->addChild(enemycreate);
@@ -409,18 +402,11 @@ void GameMenu::lose() {
     again_btn->setCallback([this, black_layer](Ref* psender) {//按钮回调事件，返回上一级
         SoundManager::getInstance()->button_sound_effect();
         this->removeChildByName("PlayingLevel");
-        if (level_selection == 1) {
-            auto level_1_1 = Level_1_1::createLayer();
-            level_1_1->setName("PlayingLevel");
-            this->addChild(level_1_1, -3);
-            start();
-        }
-        else if (level_selection == 2) {
-            auto level_1_2 = Level_1_2::createLayer();
-            level_1_2->setName("PlayingLevel");
-            this->addChild(level_1_2, -3);
-            start();
-        }
+        auto level= LevelLayer::createLayer(level_selection);
+        level->setName("PlayingLevel");
+        this->addChild(level, -3);
+        start();
+        
         this->getParent()->removeChildByName("EnemyCreate");
         auto enemycreate = EnemyCreate::create();
         enemycreate->setName("EnemyCreate");
@@ -502,7 +488,7 @@ void GameMenu::win() {
         this->getParent()->removeChildByName("PlayingLevel");
         if (level_selection == 1) {
             level_selection++;
-            auto level_1_2 = Level_1_2::createLayer();
+            auto level_1_2 = LevelLayer::createLayer(level_selection);
             level_1_2->setName("PlayingLevel");
             this->getParent()->addChild(level_1_2, -3);
             this->getParent()->removeChildByName("EnemyCreate");
@@ -637,16 +623,9 @@ void GameMenu::options() {
     restart_btn->setCallback([this, black_layer](Ref* psender) {//按钮回调事件，返回上一级
         SoundManager::getInstance()->button_sound_effect();
         this->removeChildByName("PlayingLevel");
-        if (level_selection == 1) {
-            auto level_1_1 = Level_1_1::createLayer();
-            level_1_1->setName("PlayingLevel");
-            this->addChild(level_1_1, -3);
-        }
-        else if (level_selection == 2) {
-            auto level_1_2 = Level_1_2::createLayer();
-            level_1_2->setName("PlayingLevel");
-            this->addChild(level_1_2, -3);
-        }
+        auto level = LevelLayer::createLayer(level_selection);
+        level->setName("PlayingLevel");
+        this->addChild(level, -3);
         this->getParent()->removeChildByName("EnemyCreate");
         auto enemycreate = EnemyCreate::create();
         enemycreate->setName("EnemyCreate");

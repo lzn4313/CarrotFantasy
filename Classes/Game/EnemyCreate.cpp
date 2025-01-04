@@ -14,6 +14,7 @@ extern int if_speed_up;
 extern int if_pause;
 extern vector<Enemy*> monster;
 extern vector<Enemy*> barrier;
+extern char game_map[7][12];
 /************************************  初始化  ********************************/
 cocos2d::Layer* EnemyCreate::createLayer() {
 	return EnemyCreate::create();
@@ -70,6 +71,7 @@ void EnemyCreate::SetLevel(int level_selection) {
 				break;
 		}
 	}
+	fclose(file);
 	//if (level == 1) {
 	//	//第一关
 	//	start_position = { 1,1 };
@@ -178,6 +180,7 @@ void EnemyCreate::barrier_appear(int Type, pos position) {
 	barrier_1->setPosition(Vec2(vec.x, vec.y));
 	this->addChild(barrier_1);
 	barrier.push_back(static_cast<Enemy*>(barrier_1));
+	game_map[position.i][position.j] = 1;
 }
 //两格障碍物
 void EnemyCreate::barrier_appear(int Type, pos position_l,pos position_r) {
@@ -191,6 +194,8 @@ void EnemyCreate::barrier_appear(int Type, pos position_l,pos position_r) {
 	barrier_1->setPosition(Vec2(vec.x, vec.y));
 	this->addChild(barrier_1);
 	barrier.push_back(static_cast<Enemy*>(barrier_1));
+	game_map[position_l.i][position_l.j] = 1;
+	game_map[position_r.i][position_r.j] = 1;
 }
 //三格障碍物
 void EnemyCreate::barrier_appear(int Type, pos position_l, pos position_r,pos position_u) {
@@ -205,6 +210,10 @@ void EnemyCreate::barrier_appear(int Type, pos position_l, pos position_r,pos po
 	barrier_1->setPosition(Vec2(vec.x, vec.y));
 	this->addChild(barrier_1);
 	barrier.push_back(static_cast<Enemy*>(barrier_1));
+	game_map[position_l.i][position_l.j] = 1;
+	game_map[position_r.i][position_r.j] = 1;
+	game_map[position_u.i][position_u.j] = 1;
+	game_map[position_u.i][position_r.j] = 1;
 }
 /*开始游戏*/
 void EnemyCreate::start() {
