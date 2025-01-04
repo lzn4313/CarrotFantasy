@@ -8,7 +8,9 @@
 #include<algorithm>
 #include <math.h>
 #include "Facade.h"
+
 USING_NS_CC;
+
 extern int game_waves;
 extern const char level_1_1_map[7][12];
 extern vector<LevelPath>levelPath;

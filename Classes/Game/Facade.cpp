@@ -16,12 +16,13 @@ Facade* Facade::getInstance()
 }
 void Facade::clear()
 {
-	gameMenu = nullptr;
+	this->gameMenu = nullptr;
+	gameMap->clear();
 }
 
 Facade::Facade()
 {
-	gameMenu = nullptr;
+	this->gameMenu = nullptr;
 	shop = new Shop();
 	gamecontroller = new GameController();
 }
@@ -34,4 +35,11 @@ Shop* Facade::getShop()
 GameController* Facade::getGameController()
 {
 	return gamecontroller;
+}
+
+Layer* Facade::getGameMenu(int level)
+{
+	if(gameMenu ==nullptr)
+		gameMenu = GameMenu::createLayer();
+	return gameMenu;
 }

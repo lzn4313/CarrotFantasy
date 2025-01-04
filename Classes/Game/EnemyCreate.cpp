@@ -13,10 +13,6 @@
 using namespace std;
 USING_NS_CC;
 
-extern int game_waves;
-extern vector<Enemy*> monster;
-extern vector<Enemy*> barrier;
-extern char game_map[7][12];
 /************************************  初始化  ********************************/
 cocos2d::Layer* EnemyCreate::createLayer() {
 	return EnemyCreate::create();
@@ -74,85 +70,6 @@ void EnemyCreate::SetLevel(int level_selection) {
 		}
 	}
 	fclose(file);
-	//if (level == 1) {
-	//	//第一关
-	//	start_position = { 1,1 };
-	//	current_waves = 1;
-	//	max_waves = 15;
-	//	//每一波怪物存储
-	//	//前三波全是普通怪
-	//	waves.clear();
-	//	for (int i = 0; i < 3; i++) {
-	//		for (int j = 0; j < 10; j++) {
-	//			waves.push_back(NORMAL);
-	//		}
-	//		monster_data.push_back(waves);
-	//		waves.clear();
-	//	}
-	//	//后12波普通怪5个，飞行怪5个
-	//	for (int i = 3; i < 15; i++) {
-	//		for (int j = 0; j < 5; j++) {
-	//			waves.push_back(NORMAL);
-	//		}
-	//		for (int j = 0; j < 5; j++) {
-	//			waves.push_back(FLY);
-	//		}
-	//		monster_data.push_back(waves);
-	//		waves.clear();
-	//	}
-	//	//障碍物
-	//	barrier_appear(BARRIER_6, { 1,3 }, { 1,4 }, { 0,3 });
-	//	barrier_appear(BARRIER_6, { 1,7 }, { 1,8 }, { 0,7 });
-	//	barrier_appear(BARRIER_5, { 1,5 }, { 1,6 }, { 0,5 });
-	//	barrier_appear(BARRIER_3, { 4,5 }, { 4,6 });
-	//	barrier_appear(BARRIER_2, { 3,2 });
-	//	barrier_appear(BARRIER_1, { 2,4 });
-	//	barrier_appear(BARRIER_1, { 2,7 });
-	//	barrier_appear(BARRIER_2, { 3,9 });
-
-	//}
-	//else if (level == 2) {
-	//	//第二关
-	//	start_position = { 1,4 };
-	//	current_waves = 1;
-	//	max_waves = 15;
-	//	//每一波怪物存储
-	//	//前两波全是普通怪
-	//	waves.clear();
-	//	for (int i = 0; i < 2; i++) {
-	//		for (int j = 0; j < 10; j++) {
-	//			waves.push_back(NORMAL);
-	//		}
-	//		if (i == 1) {
-	//			waves.push_back(BOSS);
-	//		}
-	//		monster_data.push_back(waves);
-	//		waves.clear();
-	//	}
-	//	//后13波普通怪5个，飞行怪5个
-	//	//最后一波加一个boss
-	//	for (int i = 2; i < 15; i++) {
-	//		for (int j = 0; j < 5; j++) {
-	//			waves.push_back(NORMAL);
-	//		}
-	//		for (int j = 0; j < 5; j++) {
-	//			waves.push_back(FLY);
-	//		}
-	//		monster_data.push_back(waves);
-	//		waves.clear();
-	//	}
-
-	//	//障碍物
-	//	barrier_appear(BARRIER_2, { 4,5 });
-	//	barrier_appear(BARRIER_1, { 2,4 });
-	//	barrier_appear(BARRIER_1, { 2,8 });
-	//	barrier_appear(BARRIER_1, { 1,11 });
-	//	barrier_appear(BARRIER_1, { 4,3 });
-	//	barrier_appear(BARRIER_3, { 4,0 }, { 4,1 });
-	//	barrier_appear(BARRIER_4, { 4,8 }, { 4,9 });
-	//	barrier_appear(BARRIER_6, { 1,1 }, { 1,2 }, { 0,1 });
-	//	barrier_appear(BARRIER_5, { 3,10 }, { 3,11 }, { 2,10 });
-	//}
 }
 /*出怪*/
 void EnemyCreate::monster_appear(int Type) {
@@ -182,7 +99,7 @@ void EnemyCreate::barrier_appear(int Type, pos position) {
 	barrier_1->setPosition(Vec2(vec.x, vec.y));
 	this->addChild(barrier_1);
 	barrier.push_back(static_cast<Enemy*>(barrier_1));
-	game_map[position.i][position.j] = 1;
+	Facade::getInstance()->getGameMap()->setGameMap(position.i,position.j,1);
 }
 //两格障碍物
 void EnemyCreate::barrier_appear(int Type, pos position_l,pos position_r) {
@@ -196,8 +113,8 @@ void EnemyCreate::barrier_appear(int Type, pos position_l,pos position_r) {
 	barrier_1->setPosition(Vec2(vec.x, vec.y));
 	this->addChild(barrier_1);
 	barrier.push_back(static_cast<Enemy*>(barrier_1));
-	game_map[position_l.i][position_l.j] = 1;
-	game_map[position_r.i][position_r.j] = 1;
+	Facade::getInstance()->getGameMap()->setGameMap(position_l.i, position_l.j, 1);
+	Facade::getInstance()->getGameMap()->setGameMap(position_r.i, position_r.j, 1);
 }
 //三格障碍物
 void EnemyCreate::barrier_appear(int Type, pos position_l, pos position_r,pos position_u) {
@@ -212,10 +129,10 @@ void EnemyCreate::barrier_appear(int Type, pos position_l, pos position_r,pos po
 	barrier_1->setPosition(Vec2(vec.x, vec.y));
 	this->addChild(barrier_1);
 	barrier.push_back(static_cast<Enemy*>(barrier_1));
-	game_map[position_l.i][position_l.j] = 1;
-	game_map[position_r.i][position_r.j] = 1;
-	game_map[position_u.i][position_u.j] = 1;
-	game_map[position_u.i][position_r.j] = 1;
+	Facade::getInstance()->getGameMap()->setGameMap(position_l.i, position_l.j, 1);
+	Facade::getInstance()->getGameMap()->setGameMap(position_r.i, position_r.j, 1);
+	Facade::getInstance()->getGameMap()->setGameMap(position_u.i, position_u.j, 1);
+	Facade::getInstance()->getGameMap()->setGameMap(position_u.i, position_r.j, 1);
 }
 /*开始游戏*/
 void EnemyCreate::start() {

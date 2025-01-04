@@ -10,16 +10,6 @@
 
 USING_NS_CC;
 using namespace std;
-extern int if_speed_up;//是否加速
-extern int if_pause;//是否暂停
-extern int game_waves;//当前波数
-extern int max_waves;//总波数
-extern char game_map[7][12];//辅助地图数组
-extern int tower_available[3];//可建造防御塔存储vector
-extern pos carrot_position;
-extern vector<LevelPath> levelPath;//非cocos自带
-extern vector<Enemy*> barrier;
-extern vector<Enemy*> monster;
 
 /*******************************  错误处理  ************************************/
 static void problemLoading(const char* filename)
@@ -43,7 +33,7 @@ bool LevelLayer::init(int level)
     /***********************  部分全局变量初始化  *******************/
     for (int i = 0; i < 7; i++) {
         for (int j = 0; j < 12; j++) {
-            game_map[i][j] = 0;
+            Facade::getInstance()->getGameMap()->setGameMap(i,j,0);
         }
     }
     //更新金钱显示
@@ -77,7 +67,7 @@ bool LevelLayer::init(int level)
     start_point->setPosition(Vec2(vec.x, vec.y));
     this->addChild(start_point);
     //记录路径
-    levelPath.clear();
+    Facade::getInstance()->getGameMap()->levelPathClaer();
     LevelPath temp;
     char c;
     int i = 0;
@@ -85,13 +75,13 @@ bool LevelLayer::init(int level)
     for (int j = 0; j < i; j++) {
         fscanf(file, "%d %d %c", &a, &b, &c);
         temp = { {a,b},c };
-        levelPath.push_back(temp);
+        Facade::getInstance()->getGameMap()->setLevelPath(temp);
         if (c != 'o') {
-            game_map[a][b] = 1;
+            Facade::getInstance()->getGameMap()->setGameMap(a,b,1);
         }
         else {
-            game_map[a][b] = 5;
-            carrot_position = { a,b };
+            Facade::getInstance()->getGameMap()->setGameMap(a,b,5);
+            Facade::getInstance()->getGameMap()->setCarrotPosition({a,b});
         }
     }
 
