@@ -32,14 +32,19 @@ Shop* Facade::getShop()
 	return shop;
 }
 
+cocos2d::Scene* Facade::startGame(int level)  
+{
+	auto scene=GameScene::createScene()
+}
+
 GameController* Facade::getGameController()
 {
 	return gamecontroller;
 }
 
-Layer* Facade::getGameMenu(int level)
+Cer Facade::getGameMenu(int level)
 {
 	if(gameMenu ==nullptr)
-		gameMenu = GameMenu::createLayer();
+		gameMenu = GameMenu::create();
 	return gameMenu;
 }

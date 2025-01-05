@@ -13,9 +13,11 @@ private:
 
 	GameController* gamecontroller;
 
-	cocos2d::Layer* gameMenu;
+	GameMenu* gameMenu;
 
 	static  Facade* facade;
+
+	GameScene* gameScene;
 
 	Facade();
 
@@ -30,9 +32,11 @@ public:
 
 	Shop* getShop();
 
+	cocos2d::Scene* startGame(int);
+
 	GameController* getGameController();
 
-	cocos2d::Layer* getGameMenu(int level);
+	GameMenu* getGameMenu(int level);
 
     GameMap* getGameMap() {
 		return gameMap;

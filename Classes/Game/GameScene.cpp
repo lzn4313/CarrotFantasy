@@ -20,9 +20,9 @@ static void problemLoading(const char* filename)
 /**********************  全局变量  ***********************/
 
 /**********************************  GameScene  ***********************************/
-Scene* GameScene::createScene()
+Scene* GameScene::createScene(int level)
 {
-    return GameScene::create();
+    return GameScene::create(int level);
 }
 /*初始化*/
 bool GameScene::init()

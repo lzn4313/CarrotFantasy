@@ -176,7 +176,7 @@ void EnemyCreate::update(float dt) {
 				}
 			}
 		}
-		if (monster.size() == 0 && n == 0 && flag == 0) {
+		if ( monster.size() == 0 && n == 0 && flag == 0) {
 			clear_time += dt * (Facade::getInstance()->getGameController()->getSpeedUp() + 1);
 		}
 		time += dt * (Facade::getInstance()->getGameController()->getSpeedUp() + 1);
