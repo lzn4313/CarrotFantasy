@@ -306,12 +306,6 @@ bool GameMenu::init()
 }
 //失败
 void GameMenu::lose() {
-    Facade::getInstance()->getGameController()->setPause(1);
-    /*******************************  数据更新  *****************************/
-    UserDefault::getInstance()->setIntegerForKey("money_statistics", UserDefault::getInstance()->getIntegerForKey("money_statistics") + Facade::getInstance()->getShop()->getTotalMoney());
-    UserDefault::getInstance()->setIntegerForKey("monster_statistics", UserDefault::getInstance()->getIntegerForKey("monster_statistics") + Facade::getInstance()->getTotalData()->getTotalMonster());
-    UserDefault::getInstance()->setIntegerForKey("boss_statistics", UserDefault::getInstance()->getIntegerForKey("boss_statistics") + Facade::getInstance()->getTotalData()->getTotalBoss());
-    UserDefault::getInstance()->setIntegerForKey("damage_statistics", UserDefault::getInstance()->getIntegerForKey("damage_statistics") + Facade::getInstance()->getTotalData()->getTotalBarrier());
     /********************************  显示  ******************************/
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -350,55 +344,14 @@ void GameMenu::lose() {
     level_txt->setPosition(Vec2(origin.x + visibleSize.width * 0.4,
         origin.y + visibleSize.height * 0.43));
     black_layer->addChild(level_txt);
-    /*******************  菜单  **************************/
-    auto options_menu = Menu::create();
-    options_menu->setPosition(Vec2::ZERO);
-    black_layer->addChild(options_menu);
-    //重新开始
-    auto again_btn = MenuItemImage::create("/GameScene/again_normal.png", "/GameScene/again_selected.png");
-    again_btn->setPosition(Vec2(visibleSize.width * 0.6, visibleSize.height * 0.3));
-    again_btn->setCallback([this, black_layer](Ref* psender) {//按钮回调事件，返回上一级
-        SoundManager::getInstance()->button_sound_effect();
-        this->removeChildByName("PlayingLevel");
-        auto level= LevelLayer::createLayer(Facade::getInstance()->getLevelData()->getLevelSelection());
-        level->setName("PlayingLevel");
-        this->addChild(level, -3);
-        start();
-        
-        this->getParent()->removeChildByName("EnemyCreate");
-        auto enemycreate = EnemyCreate::create();
-        enemycreate->setName("EnemyCreate");
-        this->getParent()->addChild(enemycreate);
-        static_cast<EnemyCreate*>(enemycreate)->SetLevel(Facade::getInstance()->getLevelData()->getLevelSelection());
-        static_cast<EnemyCreate*>(enemycreate)->start();
-        static_cast<GameScene*>(this->getParent())->reset_menu();
-        });
-    options_menu->addChild(again_btn);
-    Facade::getInstance()->getShop()->setGameMoney(450);
-    //选择关卡
-    auto return_btn = MenuItemImage::create("/GameScene/return_normal.png", "/GameScene/return_selected.png");
-    return_btn->setPosition(Vec2(visibleSize.width * 0.35, visibleSize.height * 0.3));
-    return_btn->setCallback([this, black_layer](Ref* psender) {//按钮回调事件，返回上一级
-        SoundManager::getInstance()->button_sound_effect();
-        Director::getInstance()->replaceScene(GameSelectionScene::createScene());
-        });
-    options_menu->addChild(return_btn);
 
 }
 //胜利
 void GameMenu::win() {
-    Facade::getInstance()->getGameController()->setPause(1);
-    /*******************************  数据更新  *****************************/
-    UserDefault::getInstance()->setIntegerForKey("money_statistics", UserDefault::getInstance()->getIntegerForKey("money_statistics") + Facade::getInstance()->getShop()->getTotalMoney());
-    UserDefault::getInstance()->setIntegerForKey("monster_statistics", UserDefault::getInstance()->getIntegerForKey("monster_statistics") + Facade::getInstance()->getTotalData()->getTotalMonster());
-    UserDefault::getInstance()->setIntegerForKey("boss_statistics", UserDefault::getInstance()->getIntegerForKey("boss_statistics") + Facade::getInstance()->getTotalData()->getTotalBoss());
-    UserDefault::getInstance()->setIntegerForKey("damage_statistics", UserDefault::getInstance()->getIntegerForKey("damage_statistics") + Facade::getInstance()->getTotalData()->getTotalBarrier());
     /********************************  显示  ******************************/
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    /************************  获胜  ******************************/
-    UserDefault::getInstance()->setIntegerForKey("adventure_statistics", Facade::getInstance()->getLevelData()->getLevelSelection() + 1);
-    UserDefault::getInstance()->setIntegerForKey("level_1", Facade::getInstance()->getLevelData()->getLevelSelection() + 1);
+
     /************************  纯色层  *****************************/
     auto black_layer = LayerColor::create(Color4B::BLACK);
     black_layer->setPosition(Vec2::ZERO);
@@ -435,43 +388,6 @@ void GameMenu::win() {
         origin.y + visibleSize.height * 0.42));
     level_txt->setColor(Color3B::YELLOW);
     black_layer->addChild(level_txt);
-    /*******************  菜单  **************************/
-    auto options_menu = Menu::create();
-    options_menu->setPosition(Vec2::ZERO);
-    black_layer->addChild(options_menu);
-    //继续游戏
-    auto resume_btn = MenuItemImage::create("/GameScene/resume_normal.png", "/GameScene/resume_selected.png");
-    resume_btn->setPosition(Vec2(visibleSize.width * 0.6, visibleSize.height * 0.3));
-    resume_btn->setCallback([this, black_layer](Ref* psender) {//按钮回调事件，返回上一级
-        SoundManager::getInstance()->button_sound_effect();
-        this->getParent()->removeChildByName("PlayingLevel");
-        if (Facade::getInstance()->getLevelData()->getLevelSelection() == 1) {
-            Facade::getInstance()->getLevelData()->setLevelSelection(Facade::getInstance()->getLevelData()->getLevelSelection()+1);
-            auto level_1_2 = LevelLayer::createLayer(Facade::getInstance()->getLevelData()->getLevelSelection());
-            level_1_2->setName("PlayingLevel");
-            this->getParent()->addChild(level_1_2, -3);
-            this->getParent()->removeChildByName("EnemyCreate");
-            auto enemycreate = EnemyCreate::create();
-            enemycreate->setName("EnemyCreate");
-            this->getParent()->addChild(enemycreate);
-            static_cast<EnemyCreate*>(enemycreate)->SetLevel(Facade::getInstance()->getLevelData()->getLevelSelection());
-            static_cast<EnemyCreate*>(enemycreate)->start();
-            static_cast<GameScene*>(this->getParent())->reset_menu();
-        }
-        else if (Facade::getInstance()->getLevelData()->getLevelSelection() == 2) {
-            log("To be continued");
-            Director::getInstance()->replaceScene(GameSelectionScene::createScene());
-        }
-        });
-    options_menu->addChild(resume_btn);
-    //选择关卡
-    auto return_btn = MenuItemImage::create("/GameScene/return_normal.png", "/GameScene/return_selected.png");
-    return_btn->setPosition(Vec2(visibleSize.width * 0.35, visibleSize.height * 0.3));
-    return_btn->setCallback([this, black_layer](Ref* psender) {//按钮回调事件，返回上一级
-        SoundManager::getInstance()->button_sound_effect();
-        Director::getInstance()->replaceScene(GameSelectionScene::createScene());
-        });
-    options_menu->addChild(return_btn);
 
 }
 //重写update函数
@@ -611,8 +527,6 @@ void GameMenu::start()
     //获取屏幕大小
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    //倒计时的时候游戏是暂停的
-    Facade::getInstance()->getGameController()->setPause(1);
     //倒计时页
     auto time_layer = Layer::create();
     this->addChild(time_layer);
@@ -662,7 +576,6 @@ void GameMenu::start()
         });
     time_layer->runAction(Sequence::create(DelayTime::create(3.1), start_call_back, nullptr));
     Facade::getInstance()->getGameController()->setPause(0);
-
 }
 //建造
 void GameMenu::build(pos position, int tower_available[]) {

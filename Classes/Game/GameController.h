@@ -18,5 +18,6 @@ public:
 	void setPause(int pause);//设置停顿参数
 	int getAllClear();//获取怪物是否已经清空
 	void setAllClear(int isclear);//设置怪物是否清空
+	void continueGame();
 };
 #endif // __Game_Controller_H__

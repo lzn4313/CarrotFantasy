@@ -52,9 +52,8 @@ void Shop::updateTower(Tower* tower, int money)
 	changeGameMoney(money * -1);
 }
 //出售Tower,tower删除返回售价
-void Shop::sellTower(Tower* tower, int money)
+void Shop::sellTower(Tower* tower)
 {
-	//tower.delete();
-	changeGameMoney(money);
+	changeGameMoney(tower->sell_tower());
 }
 

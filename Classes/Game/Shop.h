@@ -26,7 +26,7 @@ public:
 	//升级炮台
 	void updateTower(Tower*tower, int money);
 	//出售炮台
-	void sellTower(Tower* tower, int money);
+	void sellTower(Tower* tower);
 
 };
 #endif // __Shop_H__
