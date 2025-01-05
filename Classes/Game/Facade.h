@@ -13,39 +13,51 @@
 
 class Facade {
 private:
-	
-	Facade();
+	Shop* shop;
+
+	GameController* gamecontroller;
+
+	GameMenu* gameMenu;
+
+	TotalData* totalData;
 
 	static  Facade* facade;
-	Shop* shop;
-	GameController* gamecontroller;
-	GameMenu* gameMenu;
-	TotalData* totalData;
+
 	GameScene* gameScene;
+
+	Facade();
+
 	GameMap* gameMap;
+
 	LevelData* levelData;
+
 	GameScene* gameScene;
 	LevelLayer* levelLayer;
-	EnemyMoniter* enemyMoniter;
 
+	EnemyMoniter* enemyMoniter;
 public:
 
 	static Facade* getInstance();
 
 	void clear();
 	void startGame();
-	void pause();
-	void speedUp();
+	void pause(GameController gamecontroller);
+	void speedUp(GameController gamecontroller);
 	void win();
 	void lose();
 	void buyTower(int tag, int money);
 	void sellTower(Tower* tower);
 
 	Shop* getShop();
+
 	cocos2d::Scene* startGame(int);
+
 	GameController* getGameController();
+
 	GameMenu* getGameMenu(int level);
+
 	TotalData* getTotalData();
+
 	LevelData* getLevelData();
 
 	void setCarrotPosition(int i, int j) { gameMap->setCarrotPosition({ i,j }); }
@@ -62,5 +74,6 @@ public:
 	void levelPathClear() { gameMap->levelPathClaer(); }
 
 	const vector<Enemy*>& getMonster() { return enemyMoniter->getMonster(); }
+
 	const vector<Enemy*>& getBarrier() { return enemyMoniter->getBarrier(); }
 };

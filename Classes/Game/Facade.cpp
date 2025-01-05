@@ -21,13 +21,13 @@ void Facade::startGame()
 	gameMenu->start();
 	shop->setGameMoney(450);
 }
-void Facade::pause()
+void Facade::pause(GameController gamecontroller)
 {
-	gamecontroller->changePause();
+	gamecontroller.changePause();
 }
-void Facade::speedUp()
+void Facade::speedUp(GameController gamecontroller)
 {
-	gamecontroller->changeSpeedUp();
+	gamecontroller.changeSpeedUp();
 }
 void Facade::win()
 {
