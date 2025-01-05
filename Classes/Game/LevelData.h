@@ -10,8 +10,6 @@ private:
     int game_waves;
     int level_selection;
     int max_waves;
-    vector<Enemy*> monster;
-    vector<Enemy*> barrier;
     int carrot_level;
     Enemy* destination;
     int tower_available[3];
@@ -79,23 +77,6 @@ public:
         return max_waves;
     }
 
-    // monster (vector<Enemy*>)
-    void setMonsters(const vector<Enemy*>& monsters) {
-        monster = monsters;
-    }
-
-    const vector<Enemy*>& getMonsters() const {
-        return monster;
-    }
-
-    // barrier (vector<Enemy*>)
-    void setBarriers(const vector<Enemy*>& barriers) {
-        barrier = barriers;
-    }
-
-    const vector<Enemy*>& getBarriers() const {
-        return barrier;
-    }
 
     // carrot_level
     void setCarrotLevel(int level) {
@@ -120,8 +101,6 @@ public:
         game_waves = 0;
         level_selection = 0;
         max_waves = 0;
-        monster.clear();     // Clear the vector (delete all elements)
-        barrier.clear();     // Clear the vector (delete all elements)
         carrot_level = 0;
         destination = nullptr; // Set the destination to nullptr
     }
