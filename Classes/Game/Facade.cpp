@@ -18,6 +18,10 @@ void Facade::clear()
 {
 	this->gameMenu = nullptr;
 	gameMap->clear();
+	shop = nullptr;
+	gamecontroller = nullptr;
+	totalData = nullptr;
+	levelData = nullptr;
 }
 
 Facade::Facade()
@@ -25,6 +29,7 @@ Facade::Facade()
 	this->gameMenu = nullptr;
 	shop = new Shop();
 	gamecontroller = new GameController();
+	totalData = new TotalData();
 }
 
 Shop* Facade::getShop()
@@ -47,4 +52,12 @@ Cer Facade::getGameMenu(int level)
 	if(gameMenu ==nullptr)
 		gameMenu = GameMenu::create();
 	return gameMenu;
+}
+TotalData* Facade::getTotalData()
+{
+	return totalData;
+}
+LevelData* Facade::getLevelData()
+{
+	return levelData;
 }

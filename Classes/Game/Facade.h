@@ -6,6 +6,8 @@
 #include "Shop.h"
 #include "LevelLayer.h"
 #include "gameMap.h"
+#include "TotalData.h"
+#include "LevelData.h"
 
 class Facade {
 private:
@@ -13,7 +15,8 @@ private:
 
 	GameController* gamecontroller;
 
-	GameMenu* gameMenu;
+	cocos2d::Layer* gameMenu;
+	TotalData* totalData;
 
 	static  Facade* facade;
 
@@ -22,6 +25,8 @@ private:
 	Facade();
 
 	GameMap* gameMap;
+
+	LevelData* levelData;
 
 
 public:
@@ -41,4 +46,8 @@ public:
     GameMap* getGameMap() {
 		return gameMap;
 	}
+
+	TotalData* getTotalData();
+
+	LevelData* getLevelData();
 };

@@ -39,13 +39,13 @@ bool LevelLayer::init(int level)
     //更新金钱显示
     Facade::getInstance()->getShop()->setGameMoney(450);
     //更新波数显示
-    game_waves = 0;
-    max_waves = 15;
+    Facade::getInstance()->getLevelData()->setGameWaves(0);
+    Facade::getInstance()->getLevelData()->setMaxWaves(15);
     string path;
     path = format("/Level/LevelMap_{}.txt", level);
     path = FileUtils::getInstance()->fullPathForFilename(path);
     auto file=fopen(path.c_str(), "r");
-    fscanf(file, "%d%d%d", &tower_available[0], &tower_available[1], &tower_available[2]);
+    fscanf(file, "%d%d%d", &Facade::getInstance()->getLevelData()->getTowerAvailableArray()[0], &Facade::getInstance()->getLevelData()->getTowerAvailableArray()[1], &Facade::getInstance()->getLevelData()->getTowerAvailableArray()[2]);
     /***********************  背景  ************************/
     string picture = format("/Level/Level_1_{}_bg.png", level);
     auto bg_image = Sprite::create(picture);

@@ -10,10 +10,11 @@
 #include<format>
 #include "Facade.h"
 
+
 using namespace std;
 USING_NS_CC;
 
-/************************************  ³õÊ¼»¯  ********************************/
+/************************************  ï¿½ï¿½Ê¼ï¿½ï¿½  ********************************/
 cocos2d::Layer* EnemyCreate::createLayer() {
 	return EnemyCreate::create();
 }
@@ -23,11 +24,10 @@ bool EnemyCreate::init() {
 	}
 	return true;
 }
-/**********************************  ³ÉÔ±º¯ÊýÊµÏÖ  ****************************/
-/*ÉèÖÃ¹Ø¿¨*/
+/**********************************  ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½  ****************************/
+/*ï¿½ï¿½ï¿½Ã¹Ø¿ï¿½*/
 void EnemyCreate::SetLevel(int level_selection) {
-	monster.clear();
-	barrier.clear();
+	Facade::getInstance()->getLevelData()->clear();
 	level = level_selection;
 	vector<int>waves;
 	string path = format("Level/enemy_{}.txt",level_selection);
@@ -71,16 +71,16 @@ void EnemyCreate::SetLevel(int level_selection) {
 	}
 	fclose(file);
 }
-/*³ö¹Ö*/
+/*ï¿½ï¿½ï¿½ï¿½*/
 void EnemyCreate::monster_appear(int Type) {
-	//´´½¨ÀàÐÍÎªTypeµÄ¹ÖÎï
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎªTypeï¿½Ä¹ï¿½ï¿½ï¿½
 	auto enemy = Enemy::createSprite();
 	static_cast<Enemy*>(enemy)->setType(Type);
 	vec2 start = trans_ij_to_xy(start_position);
 	enemy->setPosition(Vec2(start.x, start.y));
 	this->addChild(enemy);
-	monster.push_back(static_cast<Enemy*>(enemy));//¼ÓÈëË÷µÐÊý×é
-	//Èç¹ûÊÇ¹ÖÎï£¬²»ÊÇÕÏ°­£¬³ö¹ÖÌØÐ§ÉèÖÃ
+	Facade::getInstance()->getLevelData()->setMonsters(static_cast<Enemy*>(enemy));//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//ï¿½ï¿½ï¿½ï¿½Ç¹ï¿½ï¿½ï£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½
 	if (Type < 3) {
 		auto effect = Sprite::create("/EnemyCreate/Items02-hd_0.PNG");
 		effect->setPosition(Vec2(start.x, start.y));
@@ -88,8 +88,8 @@ void EnemyCreate::monster_appear(int Type) {
 		effect->runAction(Sequence::create(ScaleTo::create(0.2, 3), CallFunc::create([effect]() {effect->removeFromParent(); }), nullptr));
 	}
 }
-/*ÕÏ°­Îï*/
-//Ò»¸ñÕÏ°­Îï
+/*ï¿½Ï°ï¿½ï¿½ï¿½*/
+//Ò»ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½
 void EnemyCreate::barrier_appear(int Type, pos position) {
 	vec2 vec;
 	auto barrier_1 = Enemy::createSprite();
@@ -98,10 +98,10 @@ void EnemyCreate::barrier_appear(int Type, pos position) {
 	vec = trans_ij_to_xy(position);
 	barrier_1->setPosition(Vec2(vec.x, vec.y));
 	this->addChild(barrier_1);
-	barrier.push_back(static_cast<Enemy*>(barrier_1));
+	Facade::getInstance()->getLevelData() ->setBarriers(static_cast<Enemy*>(barrier_1));
 	Facade::getInstance()->getGameMap()->setGameMap(position.i,position.j,1);
 }
-//Á½¸ñÕÏ°­Îï
+//ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½
 void EnemyCreate::barrier_appear(int Type, pos position_l,pos position_r) {
 	vec2 vec_l, vec_r, vec;
 	auto barrier_1 = Enemy::createSprite();
@@ -112,11 +112,11 @@ void EnemyCreate::barrier_appear(int Type, pos position_l,pos position_r) {
 	vec = { (vec_l.x + vec_r.x) / 2,(vec_l.y + vec_r.y) / 2 };
 	barrier_1->setPosition(Vec2(vec.x, vec.y));
 	this->addChild(barrier_1);
-	barrier.push_back(static_cast<Enemy*>(barrier_1));
+	Facade::getInstance()->getLevelData()->setBarriers(static_cast<Enemy*>(barrier_1));
 	Facade::getInstance()->getGameMap()->setGameMap(position_l.i, position_l.j, 1);
 	Facade::getInstance()->getGameMap()->setGameMap(position_r.i, position_r.j, 1);
 }
-//Èý¸ñÕÏ°­Îï
+//ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½
 void EnemyCreate::barrier_appear(int Type, pos position_l, pos position_r,pos position_u) {
 	vec2 vec_l, vec_r,vec_u, vec;
 	auto barrier_1 = Enemy::createSprite();
@@ -128,20 +128,20 @@ void EnemyCreate::barrier_appear(int Type, pos position_l, pos position_r,pos po
 	vec = { (vec_l.x + vec_r.x) / 2,(vec_l.y + vec_u.y) / 2 };
 	barrier_1->setPosition(Vec2(vec.x, vec.y));
 	this->addChild(barrier_1);
-	barrier.push_back(static_cast<Enemy*>(barrier_1));
+	Facade::getInstance()->getLevelData()->setBarriers(static_cast<Enemy*>(barrier_1));
 	Facade::getInstance()->getGameMap()->setGameMap(position_l.i, position_l.j, 1);
 	Facade::getInstance()->getGameMap()->setGameMap(position_r.i, position_r.j, 1);
 	Facade::getInstance()->getGameMap()->setGameMap(position_u.i, position_u.j, 1);
 	Facade::getInstance()->getGameMap()->setGameMap(position_u.i, position_r.j, 1);
 }
-/*¿ªÊ¼ÓÎÏ·*/
+/*ï¿½ï¿½Ê¼ï¿½ï¿½Ï·*/
 void EnemyCreate::start() {
-	//¿ªÊ¼ÓÎÏ·,´ò¿ªµ÷¶ÈÆ÷
+	//ï¿½ï¿½Ê¼ï¿½ï¿½Ï·,ï¿½ò¿ªµï¿½ï¿½ï¿½ï¿½ï¿½
 	auto create_monster = CallFunc::create([=]() {this->scheduleUpdate(); });
-	//ÈýÃëµ¹¼ÆÊ±ºó¿ªÊ¼³ö¹Ö
+	//ï¿½ï¿½ï¿½ëµ¹ï¿½ï¿½Ê±ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
 	this->runAction(Sequence::create(DelayTime::create(3), create_monster, nullptr));
 }
-/*updateº¯Êý*/
+/*updateï¿½ï¿½ï¿½ï¿½*/
 void EnemyCreate::update(float dt) {
 	static float time = 1;
 	static float clear_time = 0;
@@ -149,13 +149,13 @@ void EnemyCreate::update(float dt) {
 	static int flag = 0;
 	if (Facade::getInstance()->getGameController()->getPause() == 0) {
 		if (flag == 0) {
-			if (monster.size() == 0 && clear_time >= 2) {
+			if (Facade::getInstance()->getLevelData()->getMonsters().size() == 0 && clear_time >= 2) {
 				flag = 1;
 				clear_time = 0;
-				game_waves += 1;
+				Facade::getInstance()->getLevelData()->setGameWaves(Facade::getInstance()->getLevelData()->getGameWaves()+1);
 			}
 		}
-		//Èç¹ûµ±Ç°¹ÖÎïÈ«Çå£¬ÇÒ»¹ÓÐ¹ÖÎïÃ»³ö
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½È«ï¿½å£¬ï¿½Ò»ï¿½ï¿½Ð¹ï¿½ï¿½ï¿½Ã»ï¿½ï¿½
 		if (flag == 1 && current_waves <= max_waves) {
 			if (n == 0) {
 				monster_appear(monster_data[current_waves - 1][n]);
