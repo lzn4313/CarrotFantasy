@@ -10,6 +10,7 @@
 #include<format>
 #include "Facade.h"
 
+
 using namespace std;
 USING_NS_CC;
 
@@ -26,8 +27,7 @@ bool EnemyCreate::init() {
 /**********************************  成员函数实现  ****************************/
 /*设置关卡*/
 void EnemyCreate::SetLevel(int level_selection) {
-	monster.clear();
-	barrier.clear();
+	Facade::getInstance()->getLevelData()->clear();
 	level = level_selection;
 	vector<int>waves;
 	string path = format("Level/enemy_{}.txt",level_selection);
@@ -79,7 +79,7 @@ void EnemyCreate::monster_appear(int Type) {
 	vec2 start = trans_ij_to_xy(start_position);
 	enemy->setPosition(Vec2(start.x, start.y));
 	this->addChild(enemy);
-	monster.push_back(static_cast<Enemy*>(enemy));//加入索敌数组
+	Facade::getInstance()->getLevelData()->setMonsters(static_cast<Enemy*>(enemy));//加入索敌数组
 	//如果是怪物，不是障碍，出怪特效设置
 	if (Type < 3) {
 		auto effect = Sprite::create("/EnemyCreate/Items02-hd_0.PNG");
@@ -98,7 +98,7 @@ void EnemyCreate::barrier_appear(int Type, pos position) {
 	vec = trans_ij_to_xy(position);
 	barrier_1->setPosition(Vec2(vec.x, vec.y));
 	this->addChild(barrier_1);
-	barrier.push_back(static_cast<Enemy*>(barrier_1));
+	Facade::getInstance()->getLevelData() ->setBarriers(static_cast<Enemy*>(barrier_1));
 	Facade::getInstance()->getGameMap()->setGameMap(position.i,position.j,1);
 }
 //两格障碍物
@@ -112,7 +112,7 @@ void EnemyCreate::barrier_appear(int Type, pos position_l,pos position_r) {
 	vec = { (vec_l.x + vec_r.x) / 2,(vec_l.y + vec_r.y) / 2 };
 	barrier_1->setPosition(Vec2(vec.x, vec.y));
 	this->addChild(barrier_1);
-	barrier.push_back(static_cast<Enemy*>(barrier_1));
+	Facade::getInstance()->getLevelData()->setBarriers(static_cast<Enemy*>(barrier_1));
 	Facade::getInstance()->getGameMap()->setGameMap(position_l.i, position_l.j, 1);
 	Facade::getInstance()->getGameMap()->setGameMap(position_r.i, position_r.j, 1);
 }
@@ -128,7 +128,7 @@ void EnemyCreate::barrier_appear(int Type, pos position_l, pos position_r,pos po
 	vec = { (vec_l.x + vec_r.x) / 2,(vec_l.y + vec_u.y) / 2 };
 	barrier_1->setPosition(Vec2(vec.x, vec.y));
 	this->addChild(barrier_1);
-	barrier.push_back(static_cast<Enemy*>(barrier_1));
+	Facade::getInstance()->getLevelData()->setBarriers(static_cast<Enemy*>(barrier_1));
 	Facade::getInstance()->getGameMap()->setGameMap(position_l.i, position_l.j, 1);
 	Facade::getInstance()->getGameMap()->setGameMap(position_r.i, position_r.j, 1);
 	Facade::getInstance()->getGameMap()->setGameMap(position_u.i, position_u.j, 1);
@@ -149,10 +149,10 @@ void EnemyCreate::update(float dt) {
 	static int flag = 0;
 	if (Facade::getInstance()->getGameController()->getPause() == 0) {
 		if (flag == 0) {
-			if (monster.size() == 0 && clear_time >= 2) {
+			if (Facade::getInstance()->getLevelData()->getMonsters().size() == 0 && clear_time >= 2) {
 				flag = 1;
 				clear_time = 0;
-				game_waves += 1;
+				Facade::getInstance()->getLevelData()->setGameWaves(Facade::getInstance()->getLevelData()->getGameWaves()+1);
 			}
 		}
 		//如果当前怪物全清，且还有怪物没出
@@ -176,7 +176,7 @@ void EnemyCreate::update(float dt) {
 				}
 			}
 		}
-		if (monster.size() == 0 && n == 0 && flag == 0) {
+		if (Facade::getInstance()->getLevelData()->getMonsters().size() == 0 && n == 0 && flag == 0) {
 			clear_time += dt * (Facade::getInstance()->getGameController()->getSpeedUp() + 1);
 		}
 		time += dt * (Facade::getInstance()->getGameController()->getSpeedUp() + 1);

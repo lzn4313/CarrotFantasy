@@ -16,15 +16,12 @@ Facade* Facade::getInstance()
 }
 void Facade::clear()
 {
-<<<<<<< Updated upstream
 	this->gameMenu = nullptr;
 	gameMap->clear();
-=======
-	gameMenu = nullptr;
 	shop = nullptr;
 	gamecontroller = nullptr;
 	totalData = nullptr;
->>>>>>> Stashed changes
+	levelData = nullptr;
 }
 
 Facade::Facade()
@@ -45,16 +42,17 @@ GameController* Facade::getGameController()
 	return gamecontroller;
 }
 
-<<<<<<< Updated upstream
 Layer* Facade::getGameMenu(int level)
 {
 	if(gameMenu ==nullptr)
 		gameMenu = GameMenu::createLayer();
 	return gameMenu;
 }
-=======
 TotalData* Facade::getTotalData()
 {
 	return totalData;
 }
->>>>>>> Stashed changes
+LevelData* Facade::getLevelData()
+{
+	return levelData;
+}
