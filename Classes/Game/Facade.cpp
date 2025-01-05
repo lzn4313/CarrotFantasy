@@ -30,6 +30,7 @@ Facade::Facade()
 	shop = new Shop();
 	gamecontroller = new GameController();
 	totalData = new TotalData();
+
 }
 
 Shop* Facade::getShop()
@@ -39,7 +40,11 @@ Shop* Facade::getShop()
 
 cocos2d::Scene* Facade::startGame(int level)  
 {
-	auto scene=GameScene::createScene()
+	auto scene = GameScene::createScene();
+	levelLayer = LevelLayer::create(level);
+	scene->addChild(levelLayer);
+	gameMenu = GameMenu::create();
+	scene->addChild(gameMenu);
 }
 
 GameController* Facade::getGameController()
@@ -47,7 +52,7 @@ GameController* Facade::getGameController()
 	return gamecontroller;
 }
 
-Cer Facade::getGameMenu(int level)
+GameMenu* Facade::getGameMenu(int level)
 {
 	if(gameMenu ==nullptr)
 		gameMenu = GameMenu::create();

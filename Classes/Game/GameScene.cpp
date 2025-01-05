@@ -5,7 +5,7 @@
 #include"ui/CocosGUI.h"
 #include"Game/Tower.h"
 #include"Game/Enemy.h"
-#include"Game/EnemyCreate.h"
+#include"Game/EnemyMoniter.h"
 #include<string>
 #include<vector>
 #include "LevelLayer.h"
@@ -19,9 +19,9 @@ static void problemLoading(const char* filename)
     printf("Error while loading: %s\n", filename);
 }
 /**********************************  GameScene  ***********************************/
-Scene* GameScene::createScene(int level)
+Scene* GameScene::createScene()
 {
-    return GameScene::create(int level);
+    return GameScene::create();
 }
 /*初始化*/
 bool GameScene::init()
@@ -41,11 +41,11 @@ bool GameScene::init()
     auto level = LevelLayer::createLayer(Facade::getInstance()->getLevelData()->getLevelSelection());
     level->setName("PlayingLevel");
     this->addChild(level, -1);
-    auto enemycreate = EnemyCreate::create();
+    auto enemycreate = EnemyMoniter::create();
     enemycreate->setName("EnemyCreate");
     this->addChild(enemycreate);
-    static_cast<EnemyCreate*>(enemycreate)->SetLevel(Facade::getInstance()->getLevelData()->getLevelSelection());
-    static_cast<EnemyCreate*>(enemycreate)->start();
+    static_cast<EnemyMoniter*>(enemycreate)->setLevel(Facade::getInstance()->getLevelData()->getLevelSelection());
+    static_cast<EnemyMoniter*>(enemycreate)->start();
     /***********************  菜单层  ***************************/
     auto menu_layer = Facade::getInstance()->getGameMenu(Facade::getInstance()->getLevelData()->getLevelSelection());
     menu_layer->setName("GameMenu");
@@ -194,7 +194,7 @@ bool GameMenu::init()
     }
 
     //萝卜
-    vec2 carrot_pos = trans_ij_to_xy(Facade::getInstance()->getGameMap()->getCarrotPosition());
+    vec2 carrot_pos = trans_ij_to_xy(Facade::getInstance()->getCarrotPosition());
     Facade::getInstance()->getLevelData()->setCarrotLevel(1);
     auto carrot = Sprite::create();
     carrot->setName("Carrot");
@@ -238,46 +238,46 @@ bool GameMenu::init()
             vec.x = touch->getLocation().x;
             vec.y = touch->getLocation().y;
             pos position = trans_xy_to_ij(vec);
-            if (Facade::getInstance()->getGameMap()->getGameMap(position.i,position.j) != DISABLED) {
+            if (Facade::getInstance()->getGameMap(position.i,position.j) != DISABLED) {
                 Node* node = this->getChildByTag(100 * position.i + position.j);
                 Sprite* grid = static_cast<Sprite*>(node);
-                if (Facade::getInstance()->getGameMap()->getGameMap(position.i,position.j) == EMPTY) {
+                if (Facade::getInstance()->getGameMap(position.i,position.j) == EMPTY) {
                     SoundManager::getInstance()->button_sound_effect();
                     build(position, Facade::getInstance()->getLevelData()->getTowerAvailableArray());
                 }
-                else if (Facade::getInstance()->getGameMap()->getGameMap(position.i,position.j)== TOWER || Facade::getInstance()->getGameMap()->getGameMap(position.i,position.j) == CARROT) {
+                else if (Facade::getInstance()->getGameMap(position.i,position.j)== TOWER || Facade::getInstance()->getGameMap(position.i,position.j) == CARROT) {
                     SoundManager::getInstance()->button_sound_effect();
                     tower_operations(position);
                 }
             }
             else {
                 int flag = 0;
-                for (int i = 0; i < Facade::getInstance()->getLevelData()->getMonsters().size(); i++) {
-                    if (vec.x >= Facade::getInstance()->getLevelData()->getMonsters()[i]->getPositionX() - Facade::getInstance()->getLevelData()->getMonsters()[i]->getContentSize().width / 2 &&
-                        vec.x <= Facade::getInstance()->getLevelData()->getMonsters()[i]->getPositionX() + Facade::getInstance()->getLevelData()->getMonsters()[i]->getContentSize().width / 2 &&
-                        vec.y >= Facade::getInstance()->getLevelData()->getMonsters()[i]->getPositionY() - Facade::getInstance()->getLevelData()->getMonsters()[i]->getContentSize().height / 2 &&
-                        vec.y <= Facade::getInstance()->getLevelData()->getMonsters()[i]->getPositionY() + Facade::getInstance()->getLevelData()->getMonsters()[i]->getContentSize().height / 2) {
-                        if (Facade::getInstance()->getLevelData()->getDestination() == Facade::getInstance()->getLevelData()->getMonsters()[i]) {
+                for (int i = 0; i < Facade::getInstance()->getMonster().size(); i++) {
+                    if (vec.x >= Facade::getInstance()->getMonster()[i]->getPositionX() - Facade::getInstance()->getMonster()[i]->getContentSize().width / 2 &&
+                        vec.x <= Facade::getInstance()->getMonster()[i]->getPositionX() + Facade::getInstance()->getMonster()[i]->getContentSize().width / 2 &&
+                        vec.y >= Facade::getInstance()->getMonster()[i]->getPositionY() - Facade::getInstance()->getMonster()[i]->getContentSize().height / 2 &&
+                        vec.y <= Facade::getInstance()->getMonster()[i]->getPositionY() + Facade::getInstance()->getMonster()[i]->getContentSize().height / 2) {
+                        if (Facade::getInstance()->getLevelData()->getDestination() == Facade::getInstance()->getMonster()[i]) {
                             Facade::getInstance()->getLevelData()->setDestination(nullptr);
                         }
                         else { 
-                            Facade::getInstance()->getLevelData()->setDestination(Facade::getInstance()->getLevelData()->getMonsters()[i]);
+                            Facade::getInstance()->getLevelData()->setDestination(Facade::getInstance()->getMonster()[i]);
                         }
                         flag = 1;
                         break;
                     }
                 }
                 if (flag == 0) {
-                    for (int i = 0; i < Facade::getInstance()->getLevelData()->getBarriers().size(); i++) {
-                        if (vec.x >= Facade::getInstance()->getLevelData()->getBarriers()[i]->getPositionX() - Facade::getInstance()->getLevelData()->getBarriers()[i]->getContentSize().width / 2 &&
-                            vec.x <= Facade::getInstance()->getLevelData()->getBarriers()[i]->getPositionX() + Facade::getInstance()->getLevelData()->getBarriers()[i]->getContentSize().width / 2 &&
-                            vec.y >= Facade::getInstance()->getLevelData()->getBarriers()[i]->getPositionY() - Facade::getInstance()->getLevelData()->getBarriers()[i]->getContentSize().height / 2 &&
-                            vec.y <= Facade::getInstance()->getLevelData()->getBarriers()[i]->getPositionY() + Facade::getInstance()->getLevelData()->getBarriers()[i]->getContentSize().height / 2) {
-                            if (Facade::getInstance()->getLevelData()->getDestination() == Facade::getInstance()->getLevelData()->getBarriers()[i]) {
+                    for (int i = 0; i < Facade::getInstance()->getBarrier().size(); i++) {
+                        if (vec.x >= Facade::getInstance()->getBarrier()[i]->getPositionX() - Facade::getInstance()->getBarrier()[i]->getContentSize().width / 2 &&
+                            vec.x <= Facade::getInstance()->getBarrier()[i]->getPositionX() + Facade::getInstance()->getBarrier()[i]->getContentSize().width / 2 &&
+                            vec.y >= Facade::getInstance()->getBarrier()[i]->getPositionY() - Facade::getInstance()->getBarrier()[i]->getContentSize().height / 2 &&
+                            vec.y <= Facade::getInstance()->getBarrier()[i]->getPositionY() + Facade::getInstance()->getBarrier()[i]->getContentSize().height / 2) {
+                            if (Facade::getInstance()->getLevelData()->getDestination() == Facade::getInstance()->getBarrier()[i]) {
                                 Facade::getInstance()->getLevelData()->setDestination(nullptr);
                             }
                             else {
-                                Facade::getInstance()->getLevelData()->setDestination(Facade::getInstance()->getLevelData()->getBarriers()[i]);
+                                Facade::getInstance()->getLevelData()->setDestination(Facade::getInstance()->getBarrier()[i]);
                             }
                             flag = 1;
                             break;
@@ -366,11 +366,11 @@ void GameMenu::lose() {
         start();
         
         this->getParent()->removeChildByName("EnemyCreate");
-        auto enemycreate = EnemyCreate::create();
+        auto enemycreate = EnemyMoniter::create(Facade::getInstance()->getLevelData()->getLevelSelection());
         enemycreate->setName("EnemyCreate");
         this->getParent()->addChild(enemycreate);
-        static_cast<EnemyCreate*>(enemycreate)->SetLevel(Facade::getInstance()->getLevelData()->getLevelSelection());
-        static_cast<EnemyCreate*>(enemycreate)->start();
+        static_cast<EnemyMoniter*>(enemycreate)->setLevel(Facade::getInstance()->getLevelData()->getLevelSelection());
+        static_cast<EnemyMoniter*>(enemycreate)->start();
         static_cast<GameScene*>(this->getParent())->reset_menu();
         });
     options_menu->addChild(again_btn);
@@ -451,11 +451,11 @@ void GameMenu::win() {
             level_1_2->setName("PlayingLevel");
             this->getParent()->addChild(level_1_2, -3);
             this->getParent()->removeChildByName("EnemyCreate");
-            auto enemycreate = EnemyCreate::create();
+            auto enemycreate = EnemyMoniter::create(Facade::getInstance()->getLevelData()->getLevelSelection());
             enemycreate->setName("EnemyCreate");
             this->getParent()->addChild(enemycreate);
-            static_cast<EnemyCreate*>(enemycreate)->SetLevel(Facade::getInstance()->getLevelData()->getLevelSelection());
-            static_cast<EnemyCreate*>(enemycreate)->start();
+            static_cast<EnemyMoniter*>(enemycreate)->setLevel(Facade::getInstance()->getLevelData()->getLevelSelection());
+            static_cast<EnemyMoniter*>(enemycreate)->start();
             static_cast<GameScene*>(this->getParent())->reset_menu();
         }
         else if (Facade::getInstance()->getLevelData()->getLevelSelection() == 2) {
@@ -533,7 +533,7 @@ void GameMenu::update(float dt) {
         this->unscheduleUpdate();
         lose();
     }
-    if (Facade::getInstance()->getGameController()->getAllClear() == 1 && Facade::getInstance()->getLevelData()->getMonsters().size() == 0) {
+    if (Facade::getInstance()->getGameController()->getAllClear() == 1 && Facade::getInstance()->getMonster().size() == 0) {
         this->unscheduleUpdate();
         win();
     }
@@ -586,11 +586,11 @@ void GameMenu::options() {
         level->setName("PlayingLevel");
         this->addChild(level, -3);
         this->getParent()->removeChildByName("EnemyCreate");
-        auto enemycreate = EnemyCreate::create();
+        auto enemycreate = EnemyMoniter::create(Facade::getInstance()->getLevelData()->getLevelSelection());
         enemycreate->setName("EnemyCreate");
         this->getParent()->addChild(enemycreate);
-        static_cast<EnemyCreate*>(enemycreate)->SetLevel(Facade::getInstance()->getLevelData()->getLevelSelection());
-        static_cast<EnemyCreate*>(enemycreate)->start();
+        static_cast<EnemyMoniter*>(enemycreate)->setLevel(Facade::getInstance()->getLevelData()->getLevelSelection());
+        static_cast<EnemyMoniter*>(enemycreate)->start();
         static_cast<GameScene*>(this->getParent())->reset_menu();
         Facade::getInstance()->getGameController()->setPause(0);
         });
@@ -650,7 +650,7 @@ void GameMenu::start()
     for (int i = 0; i < 7; i++) {
         for (int j = 0; j < 12; j++) {
             grid[i][j] = static_cast<Sprite*>(this->getChildByTag(i * 100 + j));
-            if (Facade::getInstance()->getGameMap()->getGameMap(i, j)== 0) {
+            if (Facade::getInstance()->getGameMap(i, j)== 0) {
                 grid[i][j]->setTexture("/GameScene/StartSprite.png");
                 grid[i][j]->runAction(Blink::create(3, 2));
             }
@@ -757,12 +757,12 @@ void GameMenu::build(pos position, int tower_available[]) {
             touch->getLocation().y >= sprite_1->getPosition().y - sprite_1->getContentSize().height / 2 &&
             touch->getLocation().y <= sprite_1->getPosition().y + sprite_1->getContentSize().height / 2) {
             if (Facade::getInstance()->getShop()->getGameMoney() >= getMoney(tower_available[0])) {//若钱够，则建造
-                Facade::getInstance()->getGameMap()->setTowerMap(position.i,position.j,new Tower);
-                Facade::getInstance()->getGameMap()->getTowerMap(position.i,position.j)->build_tower(position, tower_available[0], this);
+                Facade::getInstance()->setTowerMap(position.i,position.j,new Tower);
+                Facade::getInstance()->getTowerMap(position.i,position.j)->build_tower(position, tower_available[0], this);
                 Facade::getInstance()->getShop()->changeGameMoney(-1 * getMoney(tower_available[0]));
                 sprite->setVisible(false);
                 this->removeChild(touch_layer);
-                Facade::getInstance()->getGameMap()->setGameMap(position.i,position.j,TOWER);
+                Facade::getInstance()->setGameMap(position.i,position.j,TOWER);
             }
         }
         else if (//若按下位置在第二个炮塔图标内
@@ -771,12 +771,12 @@ void GameMenu::build(pos position, int tower_available[]) {
             touch->getLocation().y >= sprite_2->getPosition().y - sprite_2->getContentSize().height / 2 &&
             touch->getLocation().y <= sprite_2->getPosition().y + sprite_2->getContentSize().height / 2) {
             if (Facade::getInstance()->getShop()->getGameMoney() >= getMoney(tower_available[1])) {//若钱够，则建造
-                Facade::getInstance()->getGameMap()->setTowerMap(position.i,position.j,new Tower);
-                Facade::getInstance()->getGameMap()->getTowerMap(position.i,position.j)->build_tower(position, tower_available[1], this);
+                Facade::getInstance()->setTowerMap(position.i,position.j,new Tower);
+                Facade::getInstance()->getTowerMap(position.i,position.j)->build_tower(position, tower_available[1], this);
                 Facade::getInstance()->getShop()->changeGameMoney(-1 * getMoney(tower_available[1]));
                 sprite->setVisible(false);
                 this->removeChild(touch_layer);
-                Facade::getInstance()->getGameMap()->setGameMap(position.i,position.j,TOWER);
+                Facade::getInstance()->setGameMap(position.i,position.j,TOWER);
             }
         }
         else if (//若按下位置在第三个炮塔图标内
@@ -786,12 +786,12 @@ void GameMenu::build(pos position, int tower_available[]) {
             touch->getLocation().y >= sprite_3->getPosition().y - sprite_3->getContentSize().height / 2 &&
             touch->getLocation().y <= sprite_3->getPosition().y + sprite_3->getContentSize().height / 2) {
             if (Facade::getInstance()->getShop()->getGameMoney() >= getMoney(tower_available[2])) {//若钱够，则建造
-                Facade::getInstance()->getGameMap()->setTowerMap(position.i,position.j,new Tower);
-                Facade::getInstance()->getGameMap()->getTowerMap(position.i,position.j)->build_tower(position, tower_available[2], this);
+                Facade::getInstance()->setTowerMap(position.i,position.j,new Tower);
+                Facade::getInstance()->getTowerMap(position.i,position.j)->build_tower(position, tower_available[2], this);
                 Facade::getInstance()->getShop()->changeGameMoney(-1 * getMoney(tower_available[2]));
                 sprite->setVisible(false);
                 this->removeChild(touch_layer);
-                Facade::getInstance()->getGameMap()->setGameMap(position.i,position.j,TOWER);
+                Facade::getInstance()->setGameMap(position.i,position.j,TOWER);
             }
         }
         else {
@@ -805,10 +805,10 @@ void GameMenu::build(pos position, int tower_available[]) {
 //对防御塔的操作
 void GameMenu::tower_operations(pos position) {
     //获取防御塔信息
-    float range_scale = Facade::getInstance()->getGameMap()->getTowerMap(position.i, position.j)->get_attack_range();
-    int level = (Facade::getInstance()->getGameMap()->getGameMap(position.i, position.j) == TOWER ? Facade::getInstance()->getGameMap()->getTowerMap(position.i, position.j)->get_level() : Facade::getInstance()->getLevelData()->getCarrotLevel());
-    int level_up_money = Facade::getInstance()->getGameMap()->getTowerMap(position.i, position.j)->get_level_up_money();
-    int sell_money = Facade::getInstance()->getGameMap()->getTowerMap(position.i, position.j)->get_sell_money();
+    float range_scale = Facade::getInstance()->getTowerMap(position.i, position.j)->get_attack_range();
+    int level = (Facade::getInstance()->getGameMap(position.i, position.j) == TOWER ? Facade::getInstance()->getTowerMap(position.i, position.j)->get_level() : Facade::getInstance()->getLevelData()->getCarrotLevel());
+    int level_up_money = Facade::getInstance()->getTowerMap(position.i, position.j)->get_level_up_money();
+    int sell_money = Facade::getInstance()->getTowerMap(position.i, position.j)->get_sell_money();
     vec2 vec = trans_ij_to_xy(position);
     //遮罩层
     auto touch_layer = Layer::create();
@@ -839,7 +839,7 @@ void GameMenu::tower_operations(pos position) {
         touch_layer->addChild(level_up_label);
     }
 
-    if (Facade::getInstance()->getGameMap()->getGameMap(position.i, position.j) == TOWER) {
+    if (Facade::getInstance()->getGameMap(position.i, position.j) == TOWER) {
         //出售显示
         auto sell = Sprite::create("/GameScene/Tower/Btn_SellTower.png");
         sell->setPosition(Vec2(vec.x,
@@ -864,7 +864,7 @@ void GameMenu::tower_operations(pos position) {
                 touch->getLocation().y >= level_up->getPosition().y - level_up->getContentSize().height / 2 &&
                 touch->getLocation().y <= level_up->getPosition().y + level_up->getContentSize().height / 2) {
                 if (level < 3 && Facade::getInstance()->getShop()->getGameMoney() >= level_up_money) {
-                    Facade::getInstance()->getGameMap()->getTowerMap(position.i, position.j)->up_level_tower(position, this);
+                    Facade::getInstance()->getTowerMap(position.i, position.j)->up_level_tower(position, this);
                     log("UpLevel(position)");
                     Facade::getInstance()->getShop()->changeGameMoney(-1 * level_up_money);
                     this->removeChild(touch_layer);
@@ -875,10 +875,10 @@ void GameMenu::tower_operations(pos position) {
                 touch->getLocation().x <= sell->getPosition().x + sell->getContentSize().width / 2 &&
                 touch->getLocation().y >= sell->getPosition().y - sell->getContentSize().height / 2 &&
                 touch->getLocation().y <= sell->getPosition().y + sell->getContentSize().height / 2) {
-                Facade::getInstance()->getGameMap()->getTowerMap(position.i, position.j)->sell_tower(position, this);
+                Facade::getInstance()->getTowerMap(position.i, position.j)->sell_tower(position, this);
                 log("SellTower(position)");
                 Facade::getInstance()->getShop()->changeGameMoney(sell_money);
-                Facade::getInstance()->getGameMap()->setGameMap(position.i, position.j, EMPTY);
+                Facade::getInstance()->setGameMap(position.i, position.j, EMPTY);
                 this->removeChild(touch_layer);
             }
             else {
@@ -887,7 +887,7 @@ void GameMenu::tower_operations(pos position) {
             };
         Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, touch_layer);
     }
-    else if (Facade::getInstance()->getGameMap()->getGameMap(position.i, position.j) == CARROT) {
+    else if (Facade::getInstance()->getGameMap(position.i, position.j) == CARROT) {
         auto listener = EventListenerTouchOneByOne::create();
         listener->setSwallowTouches(true);
         listener->onTouchBegan = [](Touch* touch, Event* event) {
@@ -900,7 +900,7 @@ void GameMenu::tower_operations(pos position) {
                 touch->getLocation().y >= level_up->getPosition().y - level_up->getContentSize().height / 2 &&
                 touch->getLocation().y <= level_up->getPosition().y + level_up->getContentSize().height / 2) {
                 if (Facade::getInstance()->getLevelData()->getCarrotLevel() < 3 && Facade::getInstance()->getShop()->getGameMoney() >= level_up_money) {
-                    Facade::getInstance()->getGameMap()->getTowerMap(position.i, position.j)->up_level_tower(position, this);
+                    Facade::getInstance()->getTowerMap(position.i, position.j)->up_level_tower(position, this);
                     log("UpLevel(position)");
                     Facade::getInstance()->getShop()->changeGameMoney(-1 * level_up_money);
                     this->removeChild(touch_layer);
@@ -910,6 +910,6 @@ void GameMenu::tower_operations(pos position) {
                 this->removeChild(touch_layer);
             }
             Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, touch_layer);
-        }
+            };
     }
 }

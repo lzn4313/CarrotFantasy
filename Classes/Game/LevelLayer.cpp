@@ -33,7 +33,7 @@ bool LevelLayer::init(int level)
     /***********************  部分全局变量初始化  *******************/
     for (int i = 0; i < 7; i++) {
         for (int j = 0; j < 12; j++) {
-            Facade::getInstance()->getGameMap()->setGameMap(i,j,0);
+            Facade::getInstance()->setGameMap(i,j,0);
         }
     }
     //更新金钱显示
@@ -67,21 +67,20 @@ bool LevelLayer::init(int level)
     start_point->setPosition(Vec2(vec.x, vec.y));
     this->addChild(start_point);
     //记录路径
-    Facade::getInstance()->getGameMap()->levelPathClaer();
+    Facade::getInstance()->levelPathClaer();
     LevelPath temp;
     char c;
     int i = 0;
     fscanf(file, "%d", &i);
     for (int j = 0; j < i; j++) {
         fscanf(file, "%d %d %c", &a, &b, &c);
-        temp = { {a,b},c };
-        Facade::getInstance()->getGameMap()->setLevelPath(temp);
+        Facade::getInstance()->setLevelPath(a,b,c);
         if (c != 'o') {
-            Facade::getInstance()->getGameMap()->setGameMap(a,b,1);
+            Facade::getInstance()->setGameMap(a,b,1);
         }
         else {
-            Facade::getInstance()->getGameMap()->setGameMap(a,b,5);
-            Facade::getInstance()->getGameMap()->setCarrotPosition({a,b});
+            Facade::getInstance()->setGameMap(a,b,5);
+            Facade::getInstance()->setCarrotPosition(a,b);
         }
     }
 
