@@ -55,35 +55,18 @@ if(APPLE OR WINDOWS)
 endif()
 
 # add cross-platforms source files and header files 
-list(APPEND GAME_SOURCE
-     Classes/AppDelegate.cpp
-     Classes/enemy.cpp
-     Classes/EnemyCreate.cpp
-     Classes/GameScene.cpp
-     Classes/GameSelectionScene.cpp
-     Classes/HelperScene.cpp
-     Classes/Level_1_1.cpp
-     Classes/Level_1_2.cpp
-     Classes/MenuScene.cpp
-     Classes/OptionsScene.cpp
-     Classes/Tower.cpp
-     )
-list(APPEND GAME_HEADER
-     Classes/AppDelegate.h
-     Classes/enemy.h
-     Classes/EnemyCreate.h
-     Classes/GameData.h
-     Classes/GameScene.h
-     Classes/GameSelectionScene.h
-     Classes/HelperScene.h
-     Classes/Level_1_1.h
-     Classes/Level_1_2.h
-     Classes/MenuScene.h
-     Classes/OptionsScene.h
-     Classes/Tower.h
-     Classes/GameData.h
-     Classes/sound&music.h
-     )
+file(GLOB GAME_SOURCE
+    ${CMAKE_CURRENT_SOURCE_DIR}/Classes/Config/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Classes/FrontEnd/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Classes/Game/*.cpp
+)
+
+file(GLOB GAME_HEADER
+    ${CMAKE_CURRENT_SOURCE_DIR}/Classes/Config/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Classes/FrontEnd/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Classes/Game/*.h
+)
+
 
 if(ANDROID)
     # change APP_NAME to the share library name for Android, it's value depend on AndroidManifest.xml
